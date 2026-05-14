@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboards — Bernali</title>
+  <style>
+    /* ─── RESET ─────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    /* ─── TOKENS ─────────────────────────────────────────────── */
+    :root {
+      --bg:      #f5f3ef;
+      --ink:     #0d0d0d;
+      --accent:  #ff3c00;
+      --muted:   #b0aba4;
+      --card-bg: #ffffff;
+      --border:  #e0dbd4;
+      --font:    'Inter', system-ui, -apple-system, sans-serif;
+      --serif:   'Georgia', 'Times New Roman', serif;
+    }
+
+    /* ─── BASE ───────────────────────────────────────────────── */
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--ink);
+      font-family: var(--font);
+      overflow-x: hidden;
+      cursor: none;
+    }
+
+    /* ─── CUSTOM CURSOR ──────────────────────────────────────── */
+    .cursor {
+      position: fixed;
+      width: 12px; height: 12px;
+      background: var(--accent);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9999;
+      transform: translate(-50%, -50%);
+      transition: transform 0.1s ease, width 0.3s ease, height 0.3s ease, background 0.3s ease;
+    }
+    .cursor-ring {
+      position: fixed;
+      width: 40px; height: 40px;
+      border: 1.5px solid var(--ink);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9998;
+      transform: translate(-50%, -50%);
+      transition: transform 0.18s ease, width 0.3s ease, height 0.3s ease, border-color 0.3s ease;
+    }
+    body:has(a:hover) .cursor { width: 18px; height: 18px; background: var(--ink); }
+    body:has(a:hover) .cursor-ring { width: 60px; height: 60px; border-color: var(--accent); }
+
+    /* ─── NOISE TEXTURE ──────────────────────────────────────── */
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+      background-size: 200px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ─── LOADER ─────────────────────────────────────────────── */
+    #loader {
+      position: fixed; inset: 0;
+      background: var(--ink);
+      display: flex; align-items: center; justify-content: center;
+      z-index: 1000;
+      transition: opacity 0.6s ease 0.2s, visibility 0.6s ease 0.2s;
+    }
+    #loader.hidden { opacity: 0; visibility: hidden; }
+    .loader-text {
+      font-size: clamp(2rem, 8vw, 6rem);
+      font-weight: 900;
+      color: #f5f3ef;
+      letter-spacing: -0.04em;
+      overflow: hidden;
+    }
+    .loader-text span {
+      display: inline-block;
+      transform: translateY(110%);
+      animation: slideUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+    .loader-text span:nth-child(2) { animation-delay: 0.07s; }
+    .loader-text span:nth-child(3) { animation-delay: 0.14s; }
+    .loader-text span:nth-child(4) { animation-delay: 0.21s; }
+    .loader-text span:nth-child(5) { animation-delay: 0.28s; }
+    .loader-text span:nth-child(6) { animation-delay: 0.35s; }
+    .loader-text span:nth-child(7) { animation-delay: 0.42s; }
+    .loader-text span:nth-child(8) { animation-delay: 0.49s; }
+
+    @keyframes slideUp {
+      to { transform: translateY(0); }
+    }
+
+    /* ─── NAV ────────────────────────────────────────────────── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1.5rem 2.5rem;
+      z-index: 100;
+      mix-blend-mode: multiply;
+    }
+    .nav-logo {
+      font-size: 0.85rem;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      text-decoration: none;
+      color: var(--ink);
+    }
+    .nav-count {
+      font-size: 0.75rem;
+      font-weight: 400;
+      color: var(--muted);
+      letter-spacing: 0.1em;
+    }
+
+    /* ─── HERO ───────────────────────────────────────────────── */
+    .hero {
+      min-height: 100svh;
+      display: flex; flex-direction: column;
+      justify-content: flex-end;
+      padding: 2.5rem;
+      padding-top: 8rem;
+      position: relative;
+      z-index: 1;
+    }
+    .hero-eyebrow {
+      font-size: 0.75rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 1.5rem;
+      display: flex; align-items: center; gap: 1rem;
+    }
+    .hero-eyebrow::before {
+      content: '';
+      display: block;
+      width: 2.5rem; height: 1px;
+      background: var(--muted);
+    }
+    .hero-headline {
+      font-size: clamp(3.5rem, 10vw, 10rem);
+      font-weight: 900;
+      line-height: 0.92;
+      letter-spacing: -0.04em;
+      margin-bottom: 2rem;
+      overflow: hidden;
+    }
+    .hero-headline em {
+      font-style: italic;
+      font-family: var(--serif);
+      font-weight: 400;
+      color: var(--accent);
+    }
+    .headline-line {
+      display: block;
+      transform: translateY(110%);
+      opacity: 0;
+      transition: transform 0.9s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease;
+    }
+    .headline-line.visible {
+      transform: translateY(0);
+      opacity: 1;
+    }
+    .headline-line:nth-child(2) { transition-delay: 0.12s; }
+    .headline-line:nth-child(3) { transition-delay: 0.24s; }
+
+    .hero-sub {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      max-width: 60rem;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.8s ease 0.5s, transform 0.8s ease 0.5s;
+    }
+    .hero-sub.visible { opacity: 1; transform: translateY(0); }
+    .hero-desc {
+      font-size: clamp(0.9rem, 1.5vw, 1.05rem);
+      line-height: 1.65;
+      color: #555;
+      max-width: 28rem;
+    }
+    .hero-cta {
+      display: flex; align-items: flex-end; justify-content: flex-end;
+    }
+    .scroll-hint {
+      display: flex; flex-direction: column; align-items: center; gap: 0.4rem;
+      font-size: 0.7rem; letter-spacing: 0.15em; text-transform: uppercase;
+      color: var(--muted); text-decoration: none;
+    }
+    .scroll-hint svg { animation: bounce 2s ease infinite; }
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(6px); }
+    }
+
+    /* ─── MARQUEE ────────────────────────────────────────────── */
+    .marquee-wrap {
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      overflow: hidden;
+      padding: 1rem 0;
+      position: relative; z-index: 1;
+    }
+    .marquee-track {
+      display: flex; gap: 0;
+      animation: marquee 20s linear infinite;
+      white-space: nowrap;
+    }
+    .marquee-item {
+      font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--muted);
+      padding: 0 2.5rem;
+      display: flex; align-items: center; gap: 2.5rem;
+    }
+    .marquee-item::after {
+      content: '●';
+      font-size: 0.4rem;
+      color: var(--accent);
+    }
+    @keyframes marquee {
+      from { transform: translateX(0); }
+      to { transform: translateX(-50%); }
+    }
+
+    /* ─── SECTION HEADER ─────────────────────────────────────── */
+    .section-header {
+      padding: 5rem 2.5rem 2.5rem;
+      display: flex; align-items: baseline; justify-content: space-between;
+      border-bottom: 1px solid var(--border);
+      position: relative; z-index: 1;
+    }
+    .section-label {
+      font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--muted);
+    }
+    .section-num {
+      font-size: clamp(4rem, 12vw, 9rem);
+      font-weight: 900;
+      letter-spacing: -0.05em;
+      color: var(--border);
+      line-height: 1;
+      user-select: none;
+    }
+
+    /* ─── GRID ───────────────────────────────────────────────── */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(min(100%, 22rem), 1fr));
+      gap: 1px;
+      border-top: 1px solid var(--border);
+      position: relative; z-index: 1;
+    }
+
+    /* ─── CARD ───────────────────────────────────────────────── */
+    .card {
+      background: var(--card-bg);
+      padding: 2.5rem;
+      border-right: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      display: flex; flex-direction: column;
+      gap: 1.5rem;
+      text-decoration: none;
+      color: inherit;
+      position: relative;
+      overflow: hidden;
+      opacity: 0;
+      transform: translateY(30px);
+      transition:
+        opacity 0.7s ease,
+        transform 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+        background 0.3s ease;
+    }
+    .card.visible { opacity: 1; transform: translateY(0); }
+    .card:nth-child(2) { transition-delay: 0.08s; }
+    .card:nth-child(3) { transition-delay: 0.16s; }
+    .card:nth-child(4) { transition-delay: 0.24s; }
+    .card:nth-child(5) { transition-delay: 0.32s; }
+    .card:nth-child(6) { transition-delay: 0.40s; }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: var(--ink);
+      transform: scaleY(0);
+      transform-origin: bottom;
+      transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+      z-index: 0;
+    }
+    .card:hover::before { transform: scaleY(1); }
+    .card:hover { color: var(--bg); }
+
+    .card > * { position: relative; z-index: 1; }
+
+    .card-top {
+      display: flex; justify-content: space-between; align-items: flex-start;
+    }
+    .card-index {
+      font-size: 0.7rem; letter-spacing: 0.15em;
+      color: var(--muted);
+      transition: color 0.3s;
+    }
+    .card:hover .card-index { color: var(--muted); }
+
+    .card-tag {
+      font-size: 0.65rem; letter-spacing: 0.15em; text-transform: uppercase;
+      padding: 0.25rem 0.65rem;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      color: var(--muted);
+      transition: border-color 0.3s, color 0.3s;
+    }
+    .card:hover .card-tag { border-color: rgba(245,243,239,0.3); color: rgba(245,243,239,0.6); }
+
+    .card-preview {
+      aspect-ratio: 16/9;
+      background: var(--bg);
+      border-radius: 4px;
+      overflow: hidden;
+      position: relative;
+      transition: background 0.3s;
+    }
+    .card:hover .card-preview { background: #1a1a1a; }
+
+    .card-preview img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s;
+    }
+    .card:hover .card-preview img { transform: scale(1.04); }
+
+    .preview-placeholder {
+      width: 100%; height: 100%;
+      display: flex; align-items: center; justify-content: center;
+      flex-direction: column; gap: 0.5rem;
+    }
+    .preview-bars {
+      display: flex; align-items: flex-end; gap: 6px;
+    }
+    .preview-bar {
+      width: 8px;
+      background: var(--border);
+      border-radius: 2px;
+      transition: background 0.3s;
+    }
+    .card:hover .preview-bar { background: #333; }
+    .preview-label {
+      font-size: 0.6rem; letter-spacing: 0.15em; text-transform: uppercase;
+      color: var(--muted);
+    }
+    .card:hover .preview-label { color: #555; }
+
+    .card-body {}
+    .card-title {
+      font-size: clamp(1.25rem, 2.5vw, 1.6rem);
+      font-weight: 800;
+      line-height: 1.15;
+      letter-spacing: -0.025em;
+      margin-bottom: 0.6rem;
+    }
+    .card-desc {
+      font-size: 0.875rem;
+      line-height: 1.6;
+      color: #666;
+      transition: color 0.3s;
+    }
+    .card:hover .card-desc { color: rgba(245,243,239,0.65); }
+
+    .card-footer {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-top: auto;
+      padding-top: 1rem;
+      border-top: 1px solid var(--border);
+      transition: border-color 0.3s;
+    }
+    .card:hover .card-footer { border-color: rgba(245,243,239,0.15); }
+
+    .card-tool {
+      font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--muted);
+      transition: color 0.3s;
+    }
+    .card:hover .card-tool { color: rgba(245,243,239,0.5); }
+
+    .card-arrow {
+      width: 2rem; height: 2rem;
+      border: 1px solid var(--border);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      transition: background 0.3s, border-color 0.3s, transform 0.3s;
+    }
+    .card:hover .card-arrow {
+      background: var(--accent);
+      border-color: var(--accent);
+      transform: rotate(-45deg);
+    }
+    .card-arrow svg { transition: stroke 0.3s; }
+    .card:hover .card-arrow svg { stroke: white; }
+
+    /* ─── ADD CARD ───────────────────────────────────────────── */
+    .card-add {
+      background: transparent;
+      border: 2px dashed var(--border);
+      cursor: pointer;
+      align-items: center;
+      justify-content: center;
+      min-height: 20rem;
+      flex-direction: column;
+      gap: 1rem;
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.7s ease 0.48s, transform 0.7s ease 0.48s, border-color 0.3s, background 0.3s;
+    }
+    .card-add.visible { opacity: 1; transform: translateY(0); }
+    .card-add:hover { border-color: var(--ink); background: var(--ink); }
+    .card-add:hover .add-icon { background: var(--accent); border-color: var(--accent); color: white; }
+    .card-add:hover .add-text { color: var(--bg); }
+    .add-icon {
+      width: 3rem; height: 3rem;
+      border: 1.5px solid var(--border);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.5rem;
+      color: var(--muted);
+      transition: all 0.3s;
+    }
+    .add-text {
+      font-size: 0.75rem; letter-spacing: 0.15em; text-transform: uppercase;
+      color: var(--muted);
+      transition: color 0.3s;
+    }
+
+    /* ─── ABOUT STRIP ────────────────────────────────────────── */
+    .about {
+      padding: 5rem 2.5rem;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+      border-top: 1px solid var(--border);
+      position: relative; z-index: 1;
+    }
+    @media (max-width: 640px) {
+      .about { grid-template-columns: 1fr; gap: 2rem; }
+      .hero-sub { grid-template-columns: 1fr; }
+    }
+    .about-big {
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      font-weight: 900;
+      letter-spacing: -0.04em;
+      line-height: 1.1;
+    }
+    .about-big em { font-style: italic; font-family: var(--serif); font-weight: 400; color: var(--accent); }
+    .about-right {
+      display: flex; flex-direction: column; justify-content: flex-end;
+      gap: 1.5rem;
+    }
+    .about-p {
+      font-size: 0.95rem;
+      line-height: 1.7;
+      color: #555;
+    }
+    .about-link {
+      font-size: 0.75rem; letter-spacing: 0.15em; text-transform: uppercase;
+      color: var(--ink);
+      text-decoration: none;
+      display: flex; align-items: center; gap: 0.5rem;
+      font-weight: 700;
+      border-bottom: 1.5px solid var(--ink);
+      padding-bottom: 0.15rem;
+      width: fit-content;
+      transition: color 0.2s, border-color 0.2s;
+    }
+    .about-link:hover { color: var(--accent); border-color: var(--accent); }
+
+    /* ─── FOOTER ─────────────────────────────────────────────── */
+    footer {
+      padding: 2rem 2.5rem;
+      border-top: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+      position: relative; z-index: 1;
+    }
+    .footer-copy {
+      font-size: 0.75rem; color: var(--muted);
+      letter-spacing: 0.05em;
+    }
+    .footer-mark {
+      font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--muted);
+    }
+    .footer-mark span { color: var(--accent); }
+  </style>
+</head>
+<body>
+
+  <!-- CURSOR -->
+  <div class="cursor" id="cursor"></div>
+  <div class="cursor-ring" id="cursorRing"></div>
+
+  <!-- LOADER -->
+  <div id="loader">
+    <div class="loader-text">
+      <span>D</span><span>A</span><span>T</span><span>A</span>
+      <span>&nbsp;</span>
+      <span>H</span><span>U</span><span>B</span>
+    </div>
+  </div>
+
+  <!-- NAV -->
+  <nav>
+    <a href="#" class="nav-logo">Bernali</a>
+    <span class="nav-count" id="navCount">— 0 Dashboards</span>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <p class="hero-eyebrow">Análisis de Datos · Visualización · BI</p>
+    <h1 class="hero-headline">
+      <span class="headline-line">Datos que</span>
+      <span class="headline-line"><em>cuentan</em></span>
+      <span class="headline-line">historias.</span>
+    </h1>
+    <div class="hero-sub">
+      <p class="hero-desc">
+        Colección de dashboards interactivos construidos en Tableau y Power BI.
+        Cada visualización es una historia diferente sobre los datos.
+      </p>
+      <div class="hero-cta">
+        <a href="#dashboards" class="scroll-hint">
+          <svg width="16" height="24" viewBox="0 0 16 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M8 4 L8 20 M2 14 L8 20 L14 14"/>
+          </svg>
+          Scroll
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- MARQUEE -->
+  <div class="marquee-wrap">
+    <div class="marquee-track" id="marqueeTrack"></div>
+  </div>
+
+  <!-- SECTION HEADER -->
+  <div class="section-header" id="dashboards">
+    <span class="section-label">Proyectos</span>
+    <span class="section-num">01</span>
+  </div>
+
+  <!-- GRID -->
+  <main class="grid" id="grid"></main>
+
+  <!-- ABOUT -->
+  <section class="about">
+    <div>
+      <p class="about-big">Convirtiendo <em>ruido</em> en decisiones.</p>
+    </div>
+    <div class="about-right">
+      <p class="about-p">
+        Cada dashboard es el resultado de entender primero el negocio, luego los datos.
+        El diseño siempre sigue a la claridad. Nada está puesto por azar.
+      </p>
+      <a href="mailto:tu@email.com" class="about-link">
+        Contacto →
+      </a>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <span class="footer-copy">© 2026 Bernali</span>
+    <span class="footer-mark">Hecho con <span>●</span> datos</span>
+  </footer>
+
+  <script>
+    // ── DATA ─────────────────────────────────────────────────────
+    // Edita este array para agregar/quitar dashboards
+    const dashboards = [
+      {
+        title: "Dashboard 01",
+        desc: "Agrega aquí la descripción de tu primer dashboard. Qué analiza, qué insights entrega.",
+        tag: "Tableau",
+        tool: "Tableau Public",
+        url: "https://public.tableau.com", // ← reemplaza con tu URL real
+        barHeights: [60, 80, 45, 95, 70, 55, 85],
+        img: null // ← opcional: ruta a screenshot, ej: "../img/dash1.png"
+      },
+      {
+        title: "Dashboard 02",
+        desc: "Describe el segundo dashboard. Fuente de datos, métricas principales, audiencia.",
+        tag: "Power BI",
+        tool: "Power BI",
+        url: "https://app.powerbi.com", // ← reemplaza con tu URL real
+        barHeights: [40, 90, 60, 75, 50, 85, 65],
+        img: null
+      },
+      {
+        title: "Dashboard 03",
+        desc: "Tercer proyecto de análisis. Qué problema resuelve y qué decisiones facilita.",
+        tag: "Tableau",
+        tool: "Tableau Public",
+        url: "https://public.tableau.com",
+        barHeights: [70, 55, 90, 40, 80, 60, 75],
+        img: null
+      },
+      {
+        title: "Dashboard 04",
+        desc: "Cuarto dashboard. Menciona el sector (ventas, RRHH, marketing, finanzas, etc.).",
+        tag: "Power BI",
+        tool: "Power BI",
+        url: "https://app.powerbi.com",
+        barHeights: [50, 85, 65, 95, 45, 70, 80],
+        img: null
+      },
+      {
+        title: "Dashboard 05",
+        desc: "Quinto proyecto. Qué herramientas de BI o transformación de datos usaste.",
+        tag: "Tableau",
+        tool: "Tableau Public",
+        url: "https://public.tableau.com",
+        barHeights: [80, 50, 75, 60, 90, 55, 70],
+        img: null
+      },
+    ];
+
+    // ── NAV COUNT ─────────────────────────────────────────────────
+    document.getElementById('navCount').textContent = `— ${dashboards.length} Dashboards`;
+
+    // ── MARQUEE ───────────────────────────────────────────────────
+    const marqueeItems = ['Tableau', 'Power BI', 'Análisis', 'Datos', 'Visualización', 'Business Intelligence', 'KPIs', 'Insights'];
+    const track = document.getElementById('marqueeTrack');
+    const doubled = [...marqueeItems, ...marqueeItems, ...marqueeItems, ...marqueeItems];
+    doubled.forEach(item => {
+      const el = document.createElement('span');
+      el.className = 'marquee-item';
+      el.textContent = item;
+      track.appendChild(el);
+    });
+
+    // ── BUILD CARDS ───────────────────────────────────────────────
+    const grid = document.getElementById('grid');
+
+    dashboards.forEach((d, i) => {
+      const card = document.createElement('a');
+      card.className = 'card';
+      card.href = d.url;
+      card.target = '_blank';
+      card.rel = 'noopener noreferrer';
+
+      const previewContent = d.img
+        ? `<img src="${d.img}" alt="${d.title}" loading="lazy" />`
+        : `<div class="preview-placeholder">
+            <div class="preview-bars">
+              ${d.barHeights.map(h => `<div class="preview-bar" style="height:${h}%"></div>`).join('')}
+            </div>
+            <span class="preview-label">${d.tag}</span>
+           </div>`;
+
+      card.innerHTML = `
+        <div class="card-top">
+          <span class="card-index">${String(i + 1).padStart(2, '0')}</span>
+          <span class="card-tag">${d.tag}</span>
+        </div>
+        <div class="card-preview" style="padding:1rem;">${previewContent}</div>
+        <div class="card-body">
+          <h2 class="card-title">${d.title}</h2>
+          <p class="card-desc">${d.desc}</p>
+        </div>
+        <div class="card-footer">
+          <span class="card-tool">${d.tool}</span>
+          <span class="card-arrow">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M2 12 L12 2 M5 2 L12 2 L12 9"/>
+            </svg>
+          </span>
+        </div>`;
+      grid.appendChild(card);
+    });
+
+    // Add card
+    const addCard = document.createElement('div');
+    addCard.className = 'card card-add';
+    addCard.innerHTML = `
+      <div class="add-icon">+</div>
+      <span class="add-text">Agregar Dashboard</span>`;
+    grid.appendChild(addCard);
+
+    // ── LOADER ────────────────────────────────────────────────────
+    window.addEventListener('load', () => {
+      setTimeout(() => {
+        document.getElementById('loader').classList.add('hidden');
+        // Trigger hero animations
+        document.querySelectorAll('.headline-line').forEach((el, i) => {
+          setTimeout(() => el.classList.add('visible'), i * 120);
+        });
+        setTimeout(() => document.querySelector('.hero-sub').classList.add('visible'), 400);
+      }, 1400);
+    });
+
+    // ── CUSTOM CURSOR ─────────────────────────────────────────────
+    const cursor = document.getElementById('cursor');
+    const ring = document.getElementById('cursorRing');
+    let mx = 0, my = 0, rx = 0, ry = 0;
+
+    document.addEventListener('mousemove', e => {
+      mx = e.clientX; my = e.clientY;
+      cursor.style.left = mx + 'px';
+      cursor.style.top = my + 'px';
+    });
+
+    function animateRing() {
+      rx += (mx - rx) * 0.12;
+      ry += (my - ry) * 0.12;
+      ring.style.left = rx + 'px';
+      ring.style.top = ry + 'px';
+      requestAnimationFrame(animateRing);
+    }
+    animateRing();
+
+    // ── INTERSECTION OBSERVER ─────────────────────────────────────
+    const observer = new IntersectionObserver(
+      entries => entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); }),
+      { threshold: 0.15 }
+    );
+    document.querySelectorAll('.card').forEach(el => observer.observe(el));
+  </script>
+</body>
+</html>
