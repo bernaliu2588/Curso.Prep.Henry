@@ -1,139 +1,117 @@
-# Procesos Contables 2026
+# Procesos Contables IES — 2026
+**ERP:** Siigo | **Sistema fiscal:** DIAN / RADIAN
 
 ## Equipo
 
 | Integrante | Rol |
 |---|---|
-| Cristian Leonardo | Contador |
+| Beatriz | Insumos Facturación |
+| Edgar Metatute | Automatización / Siigo (Externo) |
 | Isnardi Sanches | Tesorera |
 | Luis Amador | Aux. Contable |
-| Facturación | Externo — Sistema automatizado |
+| Cristian Leonardo | Contador |
 
 ---
 
-## Fase 1 — Origen de la Operación
+## Fase 1 — Facturación Electrónica
 
 | Proceso | Responsable | Frecuencia |
 |---|---|---|
-| Emisión de facturas de venta | **Externo** (automatizado) | Diario |
-| Recepción y validación de facturas de compra | **Externo** (automatizado) | Diario |
-| Verificación del comprobante | **Luis Amador** (Aux. Contable) | Diario |
-| Archivo físico y digital de comprobantes | **Luis Amador** (Aux. Contable) | Diario/Semanal |
+| Prepara insumos: cantidades, valores y tipos de productos/servicios | **Beatriz** | Periódico |
+| Organiza el archivo plano a partir del insumo de Beatriz | **Edgar Metatute** (Siigo) | Periódico |
+| Procesa y emite las facturas electrónicas desde Siigo ERP | **Edgar Metatute** (Siigo) → **FE** | Automático |
+| Siigo envía automáticamente a la DIAN — registro en **RADIAN** | Siigo → DIAN | Automático |
 
-## Fase 2 — Registro Contable
-
-| Proceso | Responsable | Frecuencia |
-|---|---|---|
-| Ingreso de asientos al sistema contable | **Luis Amador** (Aux. Contable) | Diario |
-| Asignación de cuentas (plan de cuentas) | **Luis Amador** + supervisión Contador | Diario |
-| Registro de cuentas por cobrar y pagar | **Luis Amador** (Aux. Contable) | Diario |
-| Seguimiento de cuentas por cobrar vencidas | **Luis Amador** (Aux. Contable) | Semanal |
-
-## Fase 3 — Tesorería y Pagos
+## Fase 2 — Ingresos: Recibo de Caja (RC)
 
 | Proceso | Responsable | Frecuencia |
 |---|---|---|
-| Control de caja chica | **Isnardi Sanches** (Tesorera) | Diario |
-| Registro de cobros — clientes | **Isnardi Sanches** (Tesorera) | Diario |
-| Registro de pagos — proveedores | **Isnardi Sanches** (Tesorera) | Diario |
-| Transferencias bancarias y autorización de pagos | **Isnardi Sanches** (Tesorera) | Según necesidad |
-| Pago de sueldos y cargas sociales | **Isnardi Sanches** (Tesorera) | Mensual (día 15) |
-| Informe de posición de tesorería | **Isnardi Sanches** (Tesorera) | Mensual |
+| El cliente paga — Isnardi recibe el dinero en caja o bancos | **Isnardi Sanches** | Según ocurra |
+| Genera el **RC (Recibo de Caja)** en Siigo — registra el ingreso en contabilidad | **Isnardi Sanches** (Siigo) | Diario |
+| Selecciona las facturas correspondientes → baja la cartera del cliente | **Isnardi Sanches** (Siigo) | Mismo acto |
 
-## Fase 4 — Control y Conciliación
+## Fase 3 — Control RADIAN / DIAN
 
 | Proceso | Responsable | Frecuencia |
 |---|---|---|
-| Conciliación bancaria mensual | **Isnardi Sanches** + Luis Amador | Mensual (día 5) |
-| Balance de comprobación | **Luis Amador** (Aux. Contable) | Mensual (día 25) |
-| Revisión y aprobación de asientos | **Cristian Leonardo** (Contador) | Mensual |
+| Revisa el RADIAN: documentos registrados ante la DIAN que no están en el radar | **Luis Amador** | Mensual |
+| Cruza información RADIAN vs. sistema — actúa como filtro de control | **Luis Amador** | Mensual |
+| Identifica y gestiona documentos faltantes o no conciliados | **Luis Amador** | Mensual |
 
-## Fase 5 — Cierre Mensual
-
-| Proceso | Responsable | Frecuencia |
-|---|---|---|
-| Ajustes: devengados y provisiones | **Cristian Leonardo** (Contador) | Mensual |
-| Cálculo de depreciaciones | **Cristian Leonardo** (Contador) | Mensual |
-| Cierre contable mensual | **Cristian Leonardo** (Contador) | Mensual (último día) |
-| Estado de resultados mensual | **Cristian Leonardo** (Contador) | Mensual |
-
-## Fase 6 — Obligaciones Fiscales
+## Fase 4 — Causación de Gastos: CXP Cuenta 23
 
 | Proceso | Responsable | Frecuencia |
 |---|---|---|
-| Liquidación y declaración de IVA | **Cristian Leonardo** (Contador) | Mensual (día 10) |
-| Retenciones y percepciones | **Cristian Leonardo** (Contador) | Mensual |
-| Declaración jurada trimestral | **Cristian Leonardo** (Contador) | Trimestral (Marzo · Junio · Sep · Dic) |
-| Declaración anual de impuestos | **Cristian Leonardo** (Contador) | Anual (Enero) |
+| Causa todos los documentos a pagar, siempre con factura electrónica | **Luis Amador** (Siigo) | Continuo |
+| Registra el gasto y deja la **CXP del proveedor en Cuenta 23** | **Luis Amador** (Siigo) | Continuo |
+| La CXP Cuenta 23 queda visible en Siigo para que Isnardi sepa qué pagar | Siigo (automático) | — |
 
-## Fase 7 — Informes y Análisis
-
-| Proceso | Responsable | Frecuencia |
-|---|---|---|
-| Informe de tesorería mensual | **Isnardi Sanches** (Tesorera) | Mensual |
-| Estados financieros (Balance + Resultados) | **Cristian Leonardo** (Contador) | Mensual |
-| Revisión y ajuste de presupuesto | **Cristian Leonardo** (Contador) | Trimestral |
-| Balance semestral | **Cristian Leonardo** (Contador) | Junio / Diciembre |
-| Auditoría interna | **Cristian Leonardo** (Contador) | Junio / Diciembre |
-| Informe de gestión anual | **Cristian Leonardo** (Contador) | Anual (Diciembre) |
-
-## Fase 8 — Cierre Anual
+## Fase 5 — Pagos: Recibo de Pago (RP)
 
 | Proceso | Responsable | Frecuencia |
 |---|---|---|
-| Inventario general de activos | **Luis Amador** (Aux. Contable) | Anual (Noviembre/Diciembre) |
-| Cierre contable anual | **Cristian Leonardo** (Contador) | Anual (31 Dic) |
-| Balance general anual | **Cristian Leonardo** (Contador) | Anual (31 Dic) |
-| Estados financieros anuales auditados | **Cristian Leonardo** (Contador) | Anual (31 Dic) |
-| Declaración anual de impuestos | **Cristian Leonardo** (Contador) | Anual (Enero) |
+| Busca el proveedor en Siigo — el sistema muestra la CXP Cuenta 23 pendiente | **Isnardi Sanches** (Siigo) | Según vencimiento |
+| Selecciona la CXP, elige de dónde sale el dinero y el medio de pago | **Isnardi Sanches** (Siigo) | Según vencimiento |
+| Genera el **RP (Recibo de Pago)** — registra salida de dinero y medio de pago | **Isnardi Sanches** (Siigo) | Según vencimiento |
+
+## Fase 6 — Conciliación Bancaria
+
+| Proceso | Responsable | Frecuencia |
+|---|---|---|
+| Realiza las conciliaciones bancarias de todos los meses | **Luis Amador** | Mensual |
+| Valida la conciliación bancaria | **Cristian Leonardo** | Mensual |
+
+## Fase 7 — Nómina y Seguridad Social
+
+| Proceso | Responsable | Frecuencia |
+|---|---|---|
+| Genera la nómina mensual | **Luis Amador** | Mensual |
+| Elabora la comparativa de nómina | **Luis Amador** | Mensual |
+| Valida la nómina y la seguridad social | **Cristian Leonardo** | Mensual |
+
+## Fase 8 — Informes y Reportes a Socios
+
+| Proceso | Responsable | Frecuencia |
+|---|---|---|
+| Genera informe detallado de socios — archivo Excel | **Cristian Leonardo** | Mensual |
+| Elabora el dashboard integral completo para junta de socios | **Cristian Leonardo** | Mensual |
+
+## Fase 9 — Obligaciones Fiscales · Revisoría Fiscal
+
+| Proceso | Responsable | Frecuencia |
+|---|---|---|
+| Liquidación retención en la fuente | **Cristian Leonardo** → Revisoría Fiscal | Mensual |
+| Declaración de IVA bimestral | **Cristian Leonardo** → Revisoría Fiscal | Bimestral |
+| Declaración ICA | **Cristian Leonardo** → Revisoría Fiscal | Anual (Abril) |
+| Información exógena municipal | **Cristian Leonardo** → Revisoría Fiscal | Anual (Marzo) |
+| Otros requerimientos fiscales | **Cristian Leonardo** | Según aplique |
 
 ---
 
-## Checklist de Fechas Clave (Recurrentes)
+## Documentos Clave
+
+| Sigla | Documento | Quien lo genera |
+|---|---|---|
+| **FE** | Factura Electrónica | Edgar Metatute (Siigo) |
+| **RC** | Recibo de Caja | Isnardi Sanches |
+| **RP** | Recibo de Pago | Isnardi Sanches |
+| **CXP 23** | Cuenta por Pagar — Cuenta Contable 23 | Luis Amador (causación) |
+| **RADIAN** | Registro DIAN de facturas electrónicas | Siigo → DIAN (automático) |
+
+---
+
+## Calendario Fiscal 2026 — Fechas Clave Recurrentes
 
 | Fecha | Proceso | Responsable |
 |---|---|---|
-| Día 5 de cada mes | Conciliación bancaria (mes anterior) | Isnardi Sanches |
-| Día 10 de cada mes | Declaración de IVA (mes anterior) | Cristian Leonardo |
-| Día 15 de cada mes | Pago de sueldos y cargas sociales | Isnardi Sanches |
-| Día 25 de cada mes | Balance de comprobación | Luis Amador |
-| Último día de cada mes | Cierre contable mensual | Cristian Leonardo |
-| 20 de Marzo | Declaración jurada trimestral Q1 | Cristian Leonardo |
-| 20 de Junio | Declaración jurada trimestral Q2 + Balance semestral | Cristian Leonardo |
-| 20 de Septiembre | Declaración jurada trimestral Q3 | Cristian Leonardo |
-| Noviembre | Inicio inventario general de activos | Luis Amador |
-| 20 de Diciembre | Declaración jurada trimestral Q4 + Auditoría 2do sem. | Cristian Leonardo |
-| 31 de Diciembre | Cierre anual · Balance anual · EEFF anuales | Cristian Leonardo |
-| Enero (año siguiente) | Declaración anual de impuestos | Cristian Leonardo |
-
----
-
-## Responsabilidades por Rol
-
-### Cristian Leonardo — Contador
-- Supervisión y aprobación de todos los asientos contables
-- Cierre contable mensual y anual
-- Declaraciones fiscales (IVA, retenciones, DDJJ trimestrales y anual)
-- Estados financieros, balance general, análisis de variaciones
-- Auditoría interna semestral e informe de gestión anual
-
-### Isnardi Sanches — Tesorera
-- Control diario de caja chica
-- Registro de todos los cobros y pagos
-- Autorización y ejecución de transferencias bancarias
-- Conciliación bancaria mensual (en colaboración con Aux. Contable)
-- Pago de sueldos y cargas sociales (día 15 de cada mes)
-- Informe mensual de posición de tesorería
-
-### Luis Amador — Aux. Contable
-- Verificación y archivo de comprobantes
-- Ingreso de asientos al sistema y asignación de cuentas
-- Seguimiento semanal de cuentas por cobrar vencidas
-- Balance de comprobación mensual (día 25)
-- Conciliación bancaria (en colaboración con Tesorera)
-- Inventario general de activos (noviembre/diciembre)
-
-### Facturación — Externo (Automatizado)
-- Emisión de facturas de venta (sistema automatizado)
-- Recepción y registro de facturas de compra
-- Los comprobantes generados ingresan automáticamente al flujo contable para validación por el Aux. Contable
+| Día 1+ (continuo) | RC: cobros en caja/bancos · RP: pagos a proveedores | Isnardi Sanches |
+| Día 5 de cada mes | Revisión RADIAN | Luis Amador |
+| Día 10 de cada mes | Inicio conciliación bancaria (mes anterior) | Luis Amador |
+| Día 12 de cada mes | Retención en la fuente (mes anterior) | Cristian Leonardo |
+| **Enero, Marzo, Mayo, Julio, Septiembre, Noviembre** | Declaración IVA bimestral | Cristian Leonardo |
+| Día 20 de cada mes | Nómina mensual + comparativa | Luis Amador |
+| Día 22 de cada mes | Validación conciliación + nómina + seguridad social | Cristian Leonardo |
+| Día 28 de cada mes | Informe socios Excel + Dashboard junta | Cristian Leonardo |
+| **Marzo** | Información exógena municipal (anual) | Cristian Leonardo |
+| **Abril** | Declaración ICA (anual) | Cristian Leonardo |
+| **31 Diciembre** | Cierre contable anual — todos los módulos | Cristian Leonardo |
