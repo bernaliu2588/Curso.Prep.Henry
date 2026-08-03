@@ -38,13 +38,15 @@
 | Cruza información RADIAN vs. sistema — actúa como filtro de control | **Luis Amador** | Mensual |
 | Identifica y gestiona documentos faltantes o no conciliados | **Luis Amador** | Mensual |
 
-## Fase 4 — Causación de Gastos: CXP Cuenta 23
+## Fase 4 — Causación de Gastos: CXP Cuenta 23 / Anticipo Cuenta 13
 
 | Proceso | Responsable | Frecuencia |
 |---|---|---|
-| Causa todos los documentos a pagar, siempre con factura electrónica | **Luis Amador** (Siigo) | Continuo |
-| Registra el gasto y deja la **CXP del proveedor en Cuenta 23** | **Luis Amador** (Siigo) | Continuo |
-| La CXP Cuenta 23 queda visible en Siigo para que Isnardi sepa qué pagar | Siigo (automático) | — |
+| Revisa el RADIAN y causa cada documento: con **FE (Factura Electrónica)** para costo/gasto, o con **Documento Soporte** cuando no existe FE | **Luis Amador** (Siigo) | Continuo |
+| Registra el gasto y crea la **CXP del proveedor en Cuenta 23** — queda pendiente de pago | **Luis Amador** (Siigo) | Continuo |
+| La CXP Cuenta 23 queda visible en Siigo — Isnardi consulta qué pagar, a quién y cuánto | Siigo → **Isnardi Sanches** | Automático |
+| Si Isnardi debe pagar sin soporte documental: registra el desembolso como **Anticipo en Cuenta 13** (no como gasto directo) | **Isnardi Sanches** (Siigo) | Según ocurra |
+| Cuando llega la FE o cuenta de cobro: Luis la causa y **cruza la CXP Cuenta 23 contra el Anticipo Cuenta 13** — las cuentas se saldan | **Luis Amador** (Siigo) | Según ocurra |
 
 ## Fase 5 — Pagos: Recibo de Pago (RP)
 
@@ -56,32 +58,53 @@
 
 ## Fase 6 — Conciliación Bancaria
 
-| Proceso | Responsable | Frecuencia |
+| Proceso | Responsable | Ventana |
 |---|---|---|
-| Realiza las conciliaciones bancarias de todos los meses | **Luis Amador** | Mensual |
-| Valida la conciliación bancaria | **Cristian Leonardo** | Mensual |
+| Los extractos bancarios llegan (bancos, caja, tarjeta de crédito) | Bancos externos → **Luis Amador** | Días **3–6** |
+| Inicia la conciliación: extracto vs. libro contable, saldo caja, movimientos tarjeta | **Luis Amador** | Días **3–9** |
+| Genera el documento formal de conciliación con diferencias, ajustes y saldos definitivos | **Luis Amador** | Días **7–9** |
+| Valida los saldos contables y da el visto bueno — cierre de la conciliación | **Cristian Leonardo** | Días **7–9** |
 
 ## Fase 7 — Nómina y Seguridad Social
 
-| Proceso | Responsable | Frecuencia |
+### 1ª Quincena — pago día 15
+
+| Proceso | Responsable | Ventana |
 |---|---|---|
-| Genera la nómina mensual | **Luis Amador** | Mensual |
-| Elabora la comparativa de nómina | **Luis Amador** | Mensual |
-| Valida la nómina y la seguridad social | **Cristian Leonardo** | Mensual |
+| Proyecta y causa la nómina — valida deducciones: préstamos, embargos y descuentos | **Luis Amador** (Siigo) | Días **10–14** |
+| Elabora el comparativo de nómina y valida novedades del período | **Luis Amador** | Días **10–14** |
+| Realiza el desembolso de la primera quincena | **Isnardi Sanches** | Día **15** |
+
+### 2ª Quincena — pago día 30
+
+| Proceso | Responsable | Ventana |
+|---|---|---|
+| Proyecta y causa la nómina — valida deducciones: préstamos, embargos y descuentos | **Luis Amador** (Siigo) | Días **25–29** |
+| Elabora el comparativo de nómina y valida novedades del período | **Luis Amador** | Días **25–29** |
+| Realiza el desembolso de la segunda quincena | **Isnardi Sanches** | Día **30** |
+
+### Seguridad Social — mensual
+
+| Proceso | Responsable | Ventana |
+|---|---|---|
+| Causa la seguridad social del mes anterior (salud, pensión, ARL, caja de compensación) | **Luis Amador** (Siigo) | Días **10–13** |
+| Valida la nómina y la seguridad social antes del desembolso | **Cristian Leonardo** | Días **10–13** |
+| Recibe el soporte y realiza el pago a las entidades correspondientes | **Isnardi Sanches** | Días **13–15** |
 
 ## Fase 8 — Informes y Reportes a Socios
 
-| Proceso | Responsable | Frecuencia |
+| Proceso | Responsable | Ventana |
 |---|---|---|
-| Genera informe detallado de socios — archivo Excel | **Cristian Leonardo** | Mensual |
-| Elabora el dashboard integral completo para junta de socios | **Cristian Leonardo** | Mensual |
+| Genera el Excel integral: ingresos, costos y gastos; EEFF detallado por tercero; cartera del mes; recaudo | **Cristian Leonardo** | Días **12–13** |
+| Entrega el informe a Don Edgar (Gerente) — apertura del proceso con los socios | **Cristian Leonardo** | Día **15** |
+| Elabora el dashboard integral y acompaña el proceso completo hasta la junta de socios | **Cristian Leonardo** | Días **15–20** |
 
 ## Fase 9 — Obligaciones Fiscales · Revisoría Fiscal
 
 | Proceso | Responsable | Frecuencia |
 |---|---|---|
-| Liquidación retención en la fuente | **Cristian Leonardo** → Revisoría Fiscal | Mensual |
-| Declaración de IVA bimestral | **Cristian Leonardo** → Revisoría Fiscal | Bimestral |
+| Liquidación retención en la fuente | **Cristian Leonardo** → Revisoría Fiscal | Mensual (vence días 15–21) |
+| Declaración de IVA bimestral | **Cristian Leonardo** → Revisoría Fiscal | Bimestral (Ene, Mar, May, Jul, Sep, Nov) |
 | Declaración ICA | **Cristian Leonardo** → Revisoría Fiscal | Anual (Abril) |
 | Información exógena municipal | **Cristian Leonardo** → Revisoría Fiscal | Anual (Marzo) |
 | Otros requerimientos fiscales | **Cristian Leonardo** | Según aplique |
@@ -96,22 +119,28 @@
 | **RC** | Recibo de Caja | Isnardi Sanches |
 | **RP** | Recibo de Pago | Isnardi Sanches |
 | **CXP 23** | Cuenta por Pagar — Cuenta Contable 23 | Luis Amador (causación) |
+| **ANT 13** | Anticipo — Cuenta Contable 13 | Isnardi Sanches (pago sin soporte) |
 | **RADIAN** | Registro DIAN de facturas electrónicas | Siigo → DIAN (automático) |
 
 ---
 
-## Calendario Fiscal 2026 — Fechas Clave Recurrentes
+## Calendario Fiscal 2026 — Carga Real por Franja de Días
 
-| Fecha | Proceso | Responsable |
+| Días | Proceso | Responsable |
 |---|---|---|
-| Día 1+ (continuo) | RC: cobros en caja/bancos · RP: pagos a proveedores | Isnardi Sanches |
-| Día 5 de cada mes | Revisión RADIAN | Luis Amador |
-| Día 10 de cada mes | Inicio conciliación bancaria (mes anterior) | Luis Amador |
-| Día 12 de cada mes | Retención en la fuente (mes anterior) | Cristian Leonardo |
-| **Enero, Marzo, Mayo, Julio, Septiembre, Noviembre** | Declaración IVA bimestral | Cristian Leonardo |
-| Día 20 de cada mes | Nómina mensual + comparativa | Luis Amador |
-| Día 22 de cada mes | Validación conciliación + nómina + seguridad social | Cristian Leonardo |
-| Día 28 de cada mes | Informe socios Excel + Dashboard junta | Cristian Leonardo |
+| Día 1+ (continuo) | RC: cobros en caja/bancos · RP: pagos y anticipos Cta. 13 | Isnardi Sanches |
+| Días 3–6 | Llegan extractos bancarios → inicio conciliación bancaria | Luis Amador |
+| Días 7–9 | Validación saldos + visto bueno conciliación bancaria | Cristian Leonardo |
+| Días 10–13 | Causación seguridad social → soporte a Tesorería para pago | Luis Amador |
+| Días 10–14 | Nómina 1ª quincena: proyección, causación y comparativa | Luis Amador |
+| Día 12 | Retención en la fuente (mes anterior) | Cristian Leonardo |
+| Días 12–13 | Excel integral socios (ingresos / costos / EEFF / cartera / recaudo) — listo para entrega | Cristian Leonardo |
+| Días 13–15 | Pago seguridad social a entidades | Isnardi Sanches |
+| Día 15 | Pago nómina 1ª quincena · Entrega informe a Don Edgar (Gerente) | Isnardi + Cristian |
+| **Ene, Mar, May, Jul, Sep, Nov** | Declaración IVA bimestral (vence días 15–21) | Cristian Leonardo |
+| Días 15–20 | Proceso completo con socios + dashboard junta | Cristian Leonardo |
+| Días 25–29 | Nómina 2ª quincena: proyección, causación y comparativa | Luis Amador |
+| Día 30 | Pago nómina 2ª quincena | Isnardi Sanches |
 | **Marzo** | Información exógena municipal (anual) | Cristian Leonardo |
 | **Abril** | Declaración ICA (anual) | Cristian Leonardo |
 | **31 Diciembre** | Cierre contable anual — todos los módulos | Cristian Leonardo |
