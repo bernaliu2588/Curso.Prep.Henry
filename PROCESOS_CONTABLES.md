@@ -93,11 +93,39 @@
 
 ## Fase 8 — Informes y Reportes a Socios
 
+### 8.1 Flujo de Efectivo — insumo base para el dashboard
+
 | Proceso | Responsable | Ventana |
 |---|---|---|
-| Genera el Excel integral: ingresos, costos y gastos; EEFF detallado por tercero; cartera del mes; recaudo | **Cristian Leonardo** | Días **12–13** |
-| Entrega el informe a Don Edgar (Gerente) — apertura del proceso con los socios | **Cristian Leonardo** | Día **15** |
-| Elabora el dashboard integral y acompaña el proceso completo hasta la junta de socios | **Cristian Leonardo** | Días **15–20** |
+| Descarga el documento de flujo de efectivo directamente desde Siigo ERP y organiza el archivo clasificando los movimientos por tipo de actividad: operación, inversión y financiación | **Cristian Leonardo** (Siigo) | Días **10–11** |
+| Valida los terceros involucrados en cada transacción y verifica la coherencia entre la data descargada de Siigo y los registros del libro mayor — cualquier diferencia se investiga y ajusta antes de continuar | **Cristian Leonardo** | Días **11–12** |
+| Con la data validada, genera la estructura y los datos fuente que alimentarán el componente de flujo de efectivo dentro del dashboard de socios | **Cristian Leonardo** | Día **12** |
+
+### 8.2 Cartera y Recaudo — análisis de cobro y antigüedad
+
+| Proceso | Responsable | Ventana |
+|---|---|---|
+| Genera el informe de cartera desglosado por vigencias: corriente, vencida a +30 días, +60 días, +90 días y saldos de años anteriores — permite identificar el nivel de riesgo de incobrabilidad según la antigüedad de cada saldo | **Cristian Leonardo** | Día **12** |
+| Consolida la cartera por tercero con vista desplegable: una fila por cliente con el total acumulado que al expandirse muestra el detalle de cada factura pendiente — facilita el seguimiento individual y la gestión de cobro cliente a cliente | **Cristian Leonardo** | Día **12** |
+| Construye el análisis de recaudo del mes: cuánto se cobró durante el período y de qué antigüedad proviene ese cobro — corriente, +30 días, +60 días, +90 días y años anteriores | **Cristian Leonardo** | Días **12–13** |
+| El análisis de recaudo evidencia el comportamiento real del proceso de cobro en el mes: qué vigencias respondieron, cuáles siguen represadas y cómo evolucionó la recuperación frente a períodos anteriores | **Cristian Leonardo** | Días **12–13** |
+
+### 8.3 Estados Financieros — desarrollo y validación contra Siigo
+
+| Proceso | Responsable | Ventana |
+|---|---|---|
+| Desarrolla el Estado de Situación Financiera (Balance General) con corte al cierre del mes: activo corriente y no corriente, pasivo corriente y no corriente, y patrimonio | **Cristian Leonardo** | Días **12–13** |
+| Valida que los valores totales del EESF sean estrictamente consistentes con el reporte generado en Siigo ERP — solo cuando los saldos cuadran al centavo se procede a estructurar el informe para el dashboard | **Cristian Leonardo** (Siigo) | Días **12–13** |
+| Desarrolla el Estado de Resultados del período: ingresos operacionales, costos de ventas, gastos operacionales y no operacionales, hasta llegar a la utilidad neta del mes | **Cristian Leonardo** | Días **12–13** |
+| Valida que los totales del Estado de Resultados sean consistentes con el informe de Siigo — con los valores conciliados, estructura el layout final para el dashboard | **Cristian Leonardo** (Siigo) | Días **12–13** |
+
+### 8.4 Dashboard Integral — construcción, entrega y proceso con socios
+
+| Proceso | Responsable | Ventana |
+|---|---|---|
+| Con todos los insumos validados — flujo de efectivo, cartera por vigencias, análisis de recaudo, EESF y Estado de Resultados — construye el dashboard integral en formato ejecutivo para la junta de socios | **Cristian Leonardo** | Días **13–14** |
+| Entrega el informe completo a Don Edgar (Gerente) para revisión y apertura del proceso formal con los socios — punto de partida del análisis ejecutivo | **Cristian Leonardo** | Día **15** |
+| Acompaña el proceso completo con los socios: revisión del informe, análisis de resultados del mes y cierre de la sesión de gestión — fecha límite de entrega definitiva | **Cristian Leonardo** | Días **15–20** |
 
 ## Fase 9 — Obligaciones Fiscales · Revisoría Fiscal
 
@@ -134,7 +162,7 @@
 | Días 10–13 | Causación seguridad social → soporte a Tesorería para pago | Luis Amador |
 | Días 10–14 | Nómina 1ª quincena: proyección, causación y comparativa | Luis Amador |
 | Día 12 | Retención en la fuente (mes anterior) | Cristian Leonardo |
-| Días 12–13 | Excel integral socios (ingresos / costos / EEFF / cartera / recaudo) — listo para entrega | Cristian Leonardo |
+| Días 10–13 | Insumos socios: flujo de efectivo · cartera por vigencias · recaudo · EESF · E.Resultados — todo validado contra Siigo | Cristian Leonardo |
 | Días 13–15 | Pago seguridad social a entidades | Isnardi Sanches |
 | Día 15 | Pago nómina 1ª quincena · Entrega informe a Don Edgar (Gerente) | Isnardi + Cristian |
 | **Ene, Mar, May, Jul, Sep, Nov** | Declaración IVA bimestral (vence días 15–21) | Cristian Leonardo |
