@@ -37,6 +37,9 @@
 | Revisa el RADIAN: documentos registrados ante la DIAN que no están en el radar | **Luis Amador** | Mensual |
 | Cruza información RADIAN vs. sistema — actúa como filtro de control | **Luis Amador** | Mensual |
 | Identifica y gestiona documentos faltantes o no conciliados | **Luis Amador** | Mensual |
+| Revisa el RADIAN del período del mes: facturas electrónicas emitidas en la segunda quincena que deben quedar registradas ante la DIAN antes del cierre — cualquier documento faltante o inconsistente se gestiona de inmediato | **Luis Amador** | Días **20–25** |
+| Valida desde la perspectiva contable el RADIAN del período del mes — verifica la consistencia de los documentos registrados y da el visto bueno para proceder con el archivo plano del ciclo de facturación siguiente | **Cristian Leonardo** | Días **20–25** |
+| Con la revisión del RADIAN finalizada y el visto bueno del Contador, genera y desarrolla el archivo plano para que la facturación electrónica del primer día del próximo mes salga sin demoras — se entrega a Edgar para procesar en Siigo | **Luis Amador** → Edgar Metatute | Días **25–30** |
 
 ## Fase 4 — Causación de Gastos: CXP Cuenta 23 / Anticipo Cuenta 13
 
@@ -47,6 +50,7 @@
 | La CXP Cuenta 23 queda visible en Siigo — Isnardi consulta qué pagar, a quién y cuánto | Siigo → **Isnardi Sanches** | Automático |
 | Si Isnardi debe pagar sin soporte documental: registra el desembolso como **Anticipo en Cuenta 13** (no como gasto directo) | **Isnardi Sanches** (Siigo) | Según ocurra |
 | Cuando llega la FE o cuenta de cobro: Luis la causa y **cruza la CXP Cuenta 23 contra el Anticipo Cuenta 13** — las cuentas se saldan | **Luis Amador** (Siigo) | Según ocurra |
+| Garantiza que **todas las causaciones del mes** queden registradas en Siigo antes del cierre: revisa CXP pendientes, documentos por cruzar y cualquier FE no causada — nada puede quedar abierto para el siguiente período | **Luis Amador** (Siigo) | Días **25–30** |
 
 ## Fase 5 — Pagos: Recibo de Pago (RP)
 
@@ -167,7 +171,9 @@
 | Día 15 | Pago nómina 1ª quincena · Entrega informe a Don Edgar (Gerente) | Isnardi + Cristian |
 | **Ene, Mar, May, Jul, Sep, Nov** | Declaración IVA bimestral (vence días 15–21) | Cristian Leonardo |
 | Días 15–20 | Proceso completo con socios + dashboard junta | Cristian Leonardo |
+| Días 20–25 | RADIAN período del mes — revisión (Luis) y validación contable (Cristian) | Luis Amador + Cristian Leonardo |
 | Días 25–29 | Nómina 2ª quincena: proyección, causación y comparativa | Luis Amador |
+| Días 25–30 | Causaciones cierre mes garantizadas + archivo plano facturación día 1 | Luis Amador |
 | Día 30 | Pago nómina 2ª quincena | Isnardi Sanches |
 | **Marzo** | Información exógena municipal (anual) | Cristian Leonardo |
 | **Abril** | Declaración ICA (anual) | Cristian Leonardo |
