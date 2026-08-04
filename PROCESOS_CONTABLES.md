@@ -52,6 +52,15 @@
 | Cuando llega la FE o cuenta de cobro: Luis la causa y **cruza la CXP Cuenta 23 contra el Anticipo Cuenta 13** — las cuentas se saldan | **Luis Amador** (Siigo) | Según ocurra |
 | Garantiza que **todas las causaciones del mes** queden registradas en Siigo antes del cierre: revisa CXP pendientes, documentos por cruzar y cualquier FE no causada — nada puede quedar abierto para el siguiente período | **Luis Amador** (Siigo) | Días **25–30** |
 
+### Documento Soporte — Proveedores del Exterior (Invoice)
+
+| Proceso | Responsable | Frecuencia |
+|---|---|---|
+| A lo largo del mes llegan facturas (**invoice**) de proveedores extranjeros que no emiten FE colombiana — el único documento habilitante para generar el **Documento Soporte (DS)** ante la DIAN es el invoice recibido; cotización, contrato o proyecto **no son válidos** como soporte | Proveedores del exterior | Continuo |
+| En cuanto llega el invoice, genera el **Documento Soporte** en Siigo: causa el gasto y crea la **CXP del proveedor en Cuenta 23** — el DS vincula el invoice con el registro contable ante la DIAN | **Luis Amador** (Siigo) | Continuo |
+| Revisión conjunta al cierre del mes: verifica que cada invoice del exterior recibido en el período tenga su Documento Soporte generado y su causación completa en Siigo — ningún proveedor extranjero puede quedar sin causar al cierre | **Luis Amador** + **Cristian Leonardo** | Días **25–30** |
+| Da el visto bueno contable a la causación de proveedores del exterior: verifica consistencia de los Documentos Soporte, los invoice asociados y las CXP generadas | **Cristian Leonardo** | Días **25–30** |
+
 ## Fase 5 — Pagos: Recibo de Pago (RP)
 
 | Proceso | Responsable | Frecuencia |
@@ -153,6 +162,7 @@
 | **CXP 23** | Cuenta por Pagar — Cuenta Contable 23 | Luis Amador (causación) |
 | **ANT 13** | Anticipo — Cuenta Contable 13 | Isnardi Sanches (pago sin soporte) |
 | **RADIAN** | Registro DIAN de facturas electrónicas | Siigo → DIAN (automático) |
+| **DS** | Documento Soporte — compra a proveedor sin FE colombiana (exterior / régimen simplificado) · solo se genera con el invoice | Luis Amador (Siigo) |
 
 ---
 
