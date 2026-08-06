@@ -1,0 +1,1768 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>IES · Procesos Contables (demostración)</title>
+  <style>
+/* ─── TOKENS ──────────────────────────────────────────────────── */
+:root{
+  --bg:#EEF2F7;--surface:#FFFFFF;--sur2:#F5F7FA;
+  --ink:#1A2540;--ink2:#374151;--mu:#64748B;--mu2:#94A3B8;
+  --bd:#CBD5E1;--bd2:#94A3B8;
+  --primary:#1B3A6B;--primary-mid:#2D5AA0;--primary-lt:#ECF2FA;
+  --sa:#1D4ED8;--sa-bg:#EFF6FF;--sa-bd:#BFDBFE;
+  --sd:#15803D;--sd-bg:#F0FDF4;--sd-bd:#BBF7D0;
+  --so:#DC2626;--so-bg:#FEF2F2;--so-bd:#FECACA;
+  --su:#B45309;--su-bg:#FFFBEB;--su-bd:#FDE68A;
+  --sf:#64748B;--sf-bg:#F8FAFC;--sf-bd:#E2E8F0;
+  --r:8px;
+  --sans:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:16px;-webkit-text-size-adjust:100%}
+body{font-family:var(--sans);background:var(--bg);color:var(--ink);
+     line-height:1.5;min-height:100dvh;-webkit-font-smoothing:antialiased;}
+button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
+input{font-family:inherit}
+input[type=checkbox]{accent-color:var(--sd)}
+:focus-visible{outline:2px solid var(--primary-mid);outline-offset:2px}
+#app{max-width:480px;margin:0 auto}
+
+/* ─── IES IDENTIDAD ──────────────────────────────────────────── */
+.ies-mark{display:flex;align-items:center;gap:10px}
+.ies-badge{width:36px;height:36px;border-radius:8px;background:var(--primary);
+  display:flex;align-items:center;justify-content:center;
+  font-size:11px;font-weight:900;color:#fff;letter-spacing:-.3px;flex-shrink:0;}
+.ies-wm{flex:1;min-width:0}
+.ies-name{font-size:13px;font-weight:700;color:var(--primary);letter-spacing:-.2px;line-height:1.2}
+.ies-sub{font-size:9px;color:var(--mu);letter-spacing:.6px;text-transform:uppercase;font-weight:600;margin-top:1px}
+
+/* ─── LOADING ────────────────────────────────────────────────── */
+.load-wrap{display:flex;flex-direction:column;align-items:center;justify-content:center;
+  min-height:100dvh;gap:16px;padding:24px;}
+.spin{width:36px;height:36px;border:3px solid var(--bd);border-top-color:var(--primary);
+  border-radius:50%;animation:spin .7s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg)}}
+.load-txt{font-size:13px;color:var(--mu);font-weight:500}
+
+/* ─── LOGIN ──────────────────────────────────────────────────── */
+.log-wrap{min-height:100dvh;display:flex;flex-direction:column;padding:0}
+.log-top{background:var(--primary);padding:48px 32px 32px;text-align:center}
+.log-ies{font-size:48px;font-weight:900;color:#fff;letter-spacing:-2px;line-height:1}
+.log-title{font-size:18px;font-weight:700;color:rgba(255,255,255,.85);margin-top:8px}
+.log-sub{font-size:12px;color:rgba(255,255,255,.5);margin-top:4px}
+.log-body{flex:1;padding:32px 24px 24px;background:var(--bg)}
+.log-card{background:var(--surface);border:1px solid var(--bd);border-radius:var(--r);
+  padding:24px;display:flex;flex-direction:column;gap:16px;}
+.log-field{display:flex;flex-direction:column;gap:6px}
+.log-label{font-size:12px;font-weight:600;color:var(--ink2)}
+.log-input{width:100%;padding:10px 13px;border:1px solid var(--bd);border-radius:6px;
+  font-size:14px;color:var(--ink);background:var(--surface);
+  transition:border-color .12s,box-shadow .12s;outline:none;}
+.log-input:focus{border-color:var(--primary-mid);box-shadow:0 0 0 3px var(--primary-lt)}
+.log-btn{width:100%;padding:12px;border-radius:var(--r);
+  background:var(--primary);color:#fff;font-size:14px;font-weight:700;
+  transition:background .12s;margin-top:4px;}
+.log-btn:hover{background:var(--primary-mid)}
+.log-btn:disabled{opacity:.5;cursor:not-allowed}
+.log-err{font-size:12px;color:var(--so);background:var(--so-bg);
+  border:1px solid var(--so-bd);border-radius:6px;padding:9px 12px;text-align:center}
+.log-foot{font-size:11px;color:var(--mu);text-align:center;padding:16px;line-height:1.6}
+
+/* ─── HEADER COMPARTIDO ──────────────────────────────────────── */
+.app-hdr{
+  position:sticky;top:0;z-index:30;
+  background:var(--primary);
+  display:flex;align-items:center;gap:10px;padding:10px 14px;
+}
+.app-hdr-title{flex:1;min-width:0}
+.app-hdr-t{font-weight:700;font-size:14px;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.app-hdr-s{font-size:10px;color:rgba(255,255,255,.5);margin-top:1px}
+.hdr-icon-btn{
+  width:32px;height:32px;border-radius:6px;
+  background:rgba(255,255,255,.12);
+  display:flex;align-items:center;justify-content:center;
+  font-size:16px;color:#fff;flex-shrink:0;
+  transition:background .1s;
+}
+.hdr-icon-btn:hover{background:rgba(255,255,255,.22)}
+.hdr-pill{font-size:9px;font-weight:800;color:rgba(255,255,255,.55);
+  padding:3px 8px;border-radius:4px;background:rgba(255,255,255,.1);
+  letter-spacing:.6px;flex-shrink:0;}
+
+/* ─── LANDING ────────────────────────────────────────────────── */
+.l-banner{background:var(--surface);border-bottom:1px solid var(--bd);padding:14px 16px}
+.l-welcome{font-size:11px;color:var(--mu);font-weight:600;
+  letter-spacing:.4px;text-transform:uppercase;margin-bottom:2px}
+.l-tagline{font-size:21px;font-weight:800;letter-spacing:-.5px;
+  color:var(--ink);line-height:1.2;padding:16px 16px 10px}
+.l-tagline em{font-style:normal;color:var(--primary)}
+.l-sec{padding:4px 16px 8px;font-size:10px;letter-spacing:1.8px;
+  text-transform:uppercase;color:var(--mu);font-weight:700}
+.l-list{display:flex;flex-direction:column;gap:5px;padding:0 12px 4px}
+.p-card{display:flex;align-items:center;gap:12px;padding:12px 13px;
+  background:var(--surface);border:1px solid var(--bd);border-radius:var(--r);
+  text-align:left;color:var(--ink);width:100%;
+  transition:box-shadow .12s,border-color .12s;}
+.p-card:hover{box-shadow:0 2px 14px rgba(26,58,107,.1);border-color:var(--primary-mid)}
+.p-av{width:42px;height:42px;border-radius:8px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  font-size:12px;font-weight:800;color:#fff;}
+.p-info{flex:1;min-width:0}
+.p-name{font-weight:600;font-size:14px;line-height:1.2}
+.p-role{font-size:11px;color:var(--mu);margin-top:2px}
+.p-chip{font-size:10px;font-weight:700;padding:3px 9px;border-radius:20px;
+  flex-shrink:0;white-space:nowrap;border:1px solid transparent;}
+.p-arr{color:var(--bd2);font-size:16px;flex-shrink:0}
+.l-bottom{padding:8px 12px 24px;display:flex;flex-direction:column;gap:6px}
+.ghost-btn{display:flex;align-items:center;justify-content:center;gap:8px;
+  width:100%;padding:11px;border-radius:var(--r);
+  background:var(--surface);border:1px solid var(--bd);
+  font-size:13px;font-weight:500;color:var(--ink2);
+  transition:background .1s,border-color .1s;}
+.ghost-btn:hover{background:var(--primary-lt);border-color:var(--primary-mid);color:var(--primary)}
+.l-note{font-size:11px;color:var(--mu);text-align:center;line-height:1.7}
+
+/* ─── DASHBOARD ──────────────────────────────────────────────── */
+.d-back{background:rgba(255,255,255,.15);border-radius:6px;color:#fff;
+  width:32px;height:32px;display:flex;align-items:center;justify-content:center;
+  font-size:20px;flex-shrink:0;line-height:1;transition:background .1s;}
+.d-back:hover{background:rgba(255,255,255,.25)}
+.d-av{width:36px;height:36px;border-radius:7px;flex-shrink:0;
+  background:rgba(255,255,255,.18);
+  display:flex;align-items:center;justify-content:center;
+  font-size:11px;font-weight:800;color:#fff;}
+.sum-wrap{padding:12px 12px 0}
+.sum-card{background:var(--surface);border:1px solid var(--bd);
+  border-radius:var(--r);padding:16px;}
+.sum-row{display:flex;align-items:flex-start;gap:14px;margin-bottom:12px}
+.sum-left{flex:1}
+.sum-eyebrow{font-size:10px;letter-spacing:1.5px;text-transform:uppercase;
+  color:var(--mu);font-weight:700;margin-bottom:6px}
+.sum-frac{display:flex;align-items:baseline;gap:4px;line-height:1;font-variant-numeric:tabular-nums}
+.sum-frac-n{font-size:34px;font-weight:800;letter-spacing:-1.5px}
+.sum-frac-d{font-size:17px;font-weight:400;color:var(--mu);letter-spacing:-.3px}
+.sum-frac-lbl{font-size:11px;color:var(--mu);margin-top:5px;font-weight:500}
+.sum-right{background:var(--bg);border-radius:6px;padding:10px 14px;
+  text-align:right;border:1px solid var(--bd);}
+.sum-dn{font-size:26px;font-weight:800;line-height:1;font-variant-numeric:tabular-nums}
+.sum-dl{font-size:9px;color:var(--mu);text-transform:uppercase;letter-spacing:.8px;
+  margin-top:3px;font-weight:700;line-height:1.4}
+.pbar-bg{height:3px;background:var(--bd);border-radius:2px;overflow:hidden}
+.pbar-fill{height:100%;border-radius:2px;transition:width .5s ease}
+.pbar-meta{display:flex;justify-content:space-between;font-size:10px;
+  color:var(--mu);margin-top:4px;font-variant-numeric:tabular-nums;font-weight:500}
+.chips{display:flex;gap:5px;flex-wrap:wrap;margin-top:10px}
+.chip-s{display:flex;align-items:center;gap:4px;font-size:10px;
+  font-weight:700;padding:3px 9px;border-radius:20px;}
+.chip-dot{width:4px;height:4px;border-radius:50%;background:currentColor;flex-shrink:0}
+.tg-wrap{padding:10px 12px 0}
+.tg-hdr{display:flex;align-items:center;gap:7px;margin-bottom:6px}
+.tg-ico{width:20px;height:20px;border-radius:5px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;}
+.tg-lbl{font-size:10px;letter-spacing:1.4px;text-transform:uppercase;font-weight:700}
+.tg-cnt{margin-left:auto;font-size:10px;color:var(--mu);font-variant-numeric:tabular-nums;font-weight:600}
+.t-card{background:var(--surface);border:1px solid var(--bd);border-radius:var(--r);
+  margin-bottom:6px;overflow:hidden;}
+.t-card.st-active {border-left:3px solid var(--sa)}
+.t-card.st-overdue{border-left:3px solid var(--so)}
+.t-card.st-upcoming{border-left:3px solid var(--su)}
+.t-card.st-done   {background:var(--sur2)}
+.t-card.st-done .t-name{text-decoration:line-through;color:var(--mu)}
+.t-card.st-future {opacity:.8}
+.t-main{display:flex;align-items:flex-start;gap:10px;padding:11px 10px 11px 13px}
+.t-cb{width:15px;height:15px;flex-shrink:0;margin-top:2px;cursor:pointer}
+.t-cb:disabled{cursor:default;opacity:.5}
+.t-body{flex:1;min-width:0}
+.t-name{font-size:13px;font-weight:500;line-height:1.35;color:var(--ink)}
+.t-meta{display:flex;align-items:center;gap:5px;margin-top:5px;flex-wrap:wrap}
+.t-days{font-size:10px;font-weight:700;color:var(--mu);font-variant-numeric:tabular-nums}
+.t-badge{font-size:10px;font-weight:700;padding:2px 7px;border-radius:4px}
+.t-doc{font-size:9px;font-weight:800;padding:2px 6px;border-radius:3px;
+  background:var(--bg);color:var(--mu);letter-spacing:.5px;border:1px solid var(--bd);}
+.t-exp{color:var(--mu2);font-size:11px;padding:10px 10px 10px 6px;
+  align-self:flex-start;flex-shrink:0;transition:color .1s;}
+.t-exp:hover{color:var(--ink)}
+.t-det{display:none;padding:0 13px 12px 38px;font-size:12px;
+  color:var(--mu);line-height:1.7;border-top:1px solid var(--bd);}
+.t-det.open{display:block;padding-top:10px}
+.revert-row{padding:8px 13px 10px 38px;border-top:1px solid var(--bd)}
+.revert-btn{display:inline-flex;align-items:center;gap:5px;font-size:11px;
+  font-weight:600;color:var(--mu);padding:5px 12px;border-radius:5px;
+  border:1px solid var(--bd);background:var(--surface);
+  transition:color .12s,border-color .12s,background .12s;}
+.revert-btn:hover{color:var(--so);border-color:var(--so-bd);background:var(--so-bg)}
+.d-foot{padding:12px 12px 28px}
+.export-btn{width:100%;padding:11px;border-radius:var(--r);
+  background:var(--surface);border:1px solid var(--bd);
+  font-size:12px;color:var(--mu);font-weight:500;
+  display:flex;align-items:center;justify-content:center;gap:7px;
+  transition:background .1s,border-color .1s,color .1s;}
+.export-btn:hover{background:var(--primary-lt);border-color:var(--primary-mid);color:var(--primary)}
+
+/* ─── EQUIPO ─────────────────────────────────────────────────── */
+.tm-body{padding:10px 12px 0}
+.tm-card{background:var(--surface);border:1px solid var(--bd);
+  border-radius:var(--r);margin-bottom:8px;overflow:hidden;}
+.tm-ch{display:flex;align-items:center;gap:10px;padding:10px 13px;border-bottom:1px solid var(--bd)}
+.tm-tasks{padding:8px 13px}
+.tm-row{display:flex;align-items:flex-start;gap:7px;padding:3px 0;
+  font-size:12px;line-height:1.35;}
+.tm-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0;margin-top:4px}
+.tm-tn{flex:1;color:var(--ink2)}
+.tm-td{font-size:10px;color:var(--mu);flex-shrink:0;
+  font-variant-numeric:tabular-nums;font-weight:600}
+.tm-done-row .tm-tn{text-decoration:line-through;color:var(--mu)}
+.tm-empty{font-size:12px;color:var(--mu);padding:2px 0;font-style:italic}
+.tm-foot{padding:12px 12px 28px}
+
+/* ─── CALENDARIO ─────────────────────────────────────────────── */
+.cal-dnames{display:grid;grid-template-columns:repeat(7,1fr);
+  background:var(--primary);padding:4px 10px 8px;}
+.cal-dn{text-align:center;font-size:9px;font-weight:700;
+  color:rgba(255,255,255,.45);letter-spacing:.6px;text-transform:uppercase;}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;padding:8px 10px 4px}
+.cal-cell{background:var(--surface);border-radius:6px;padding:5px 3px 6px;
+  min-height:56px;border:1px solid var(--bd);cursor:pointer;
+  transition:border-color .12s,box-shadow .12s;
+  display:flex;flex-direction:column;align-items:center;}
+.cal-cell:hover{border-color:var(--primary-mid)}
+.cal-cell.other-month{background:transparent;border-color:transparent;
+  cursor:default;pointer-events:none;}
+.cal-cell.today{border-color:var(--primary-mid);box-shadow:0 0 0 2px var(--primary-lt)}
+.cal-cell.selected{border-color:var(--primary);background:var(--primary-lt)}
+.cal-num{font-size:11px;font-weight:500;color:var(--ink2);line-height:1;
+  margin-bottom:5px;width:20px;height:20px;
+  display:flex;align-items:center;justify-content:center;border-radius:50%;}
+.cal-num.today-n{background:var(--primary);color:#fff;font-weight:700}
+.cal-num.sel-n{color:var(--primary);font-weight:700}
+.cal-dots{display:flex;flex-wrap:wrap;gap:2px;justify-content:center;max-width:34px}
+.cal-dot{width:6px;height:6px;border-radius:2px;flex-shrink:0}
+.cal-panel{padding:0 10px 4px}
+.cal-panel-card{background:var(--surface);border:1px solid var(--bd);
+  border-radius:var(--r);overflow:hidden;}
+.cal-panel-hdr{padding:10px 13px;border-bottom:1px solid var(--bd);
+  font-size:12px;font-weight:700;color:var(--primary);
+  display:flex;align-items:center;justify-content:space-between;}
+.cal-panel-count{font-size:10px;font-weight:600;color:var(--mu);
+  background:var(--bg);border:1px solid var(--bd);padding:2px 8px;border-radius:20px;}
+.cal-trow{display:flex;align-items:flex-start;gap:8px;padding:9px 13px}
+.cal-trow+.cal-trow{border-top:1px solid var(--bd)}
+.cal-tav{width:22px;height:22px;border-radius:5px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  font-size:9px;font-weight:800;color:#fff;margin-top:1px;}
+.cal-tinfo{flex:1;min-width:0}
+.cal-tname{font-size:12px;color:var(--ink2);line-height:1.35}
+.cal-tname.done{text-decoration:line-through;color:var(--mu)}
+.cal-tperson{font-size:10px;color:var(--mu);margin-top:2px}
+.cal-tdoc{font-size:9px;font-weight:700;padding:2px 6px;border-radius:3px;
+  background:var(--bg);color:var(--mu);border:1px solid var(--bd);
+  flex-shrink:0;align-self:flex-start;margin-top:2px;letter-spacing:.4px;}
+.cal-empty{padding:14px 13px;font-size:12px;color:var(--mu);font-style:italic}
+.cal-legend{display:flex;flex-wrap:wrap;gap:6px;padding:6px 10px 10px}
+.cal-leg-item{display:flex;align-items:center;gap:4px;font-size:10px;color:var(--mu);font-weight:500}
+.cal-leg-dot{width:8px;height:8px;border-radius:2px;flex-shrink:0}
+.cal-nav{display:flex;align-items:center;justify-content:space-between;padding:0 10px 6px}
+.cal-nav-btn{width:32px;height:32px;border-radius:6px;background:var(--surface);
+  border:1px solid var(--bd);display:flex;align-items:center;justify-content:center;
+  font-size:16px;color:var(--ink2);transition:background .1s,border-color .1s;}
+.cal-nav-btn:hover{background:var(--primary-lt);border-color:var(--primary-mid);color:var(--primary)}
+.cal-nav-label{font-size:14px;font-weight:700;color:var(--ink)}
+.cal-yr-btn{font-size:11px;font-weight:600;color:var(--primary-mid);
+  padding:4px 10px;border-radius:5px;border:1px solid var(--primary-lt);
+  background:var(--primary-lt);transition:background .1s,border-color .1s;}
+.cal-yr-btn:hover{background:var(--primary);color:#fff;border-color:var(--primary)}
+.cal-foot{padding:12px 10px 28px}
+
+/* ─── AÑO ────────────────────────────────────────────────────── */
+.yr-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:12px 10px 4px}
+.yr-card{background:var(--surface);border:1px solid var(--bd);
+  border-radius:var(--r);padding:9px 9px 8px;cursor:pointer;
+  transition:border-color .1s,box-shadow .1s;}
+.yr-card:hover{border-color:var(--primary-mid)}
+.yr-card.yr-cur{border-color:var(--primary-mid);box-shadow:0 0 0 2px var(--primary-lt)}
+.yr-card.yr-sel{border-color:var(--primary);background:var(--primary-lt)}
+.yr-mname{font-size:12px;font-weight:700;color:var(--ink);margin-bottom:5px;line-height:1}
+.yr-mini-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:1px;margin-bottom:5px}
+.yr-mc{aspect-ratio:1;border-radius:1px}
+.yr-mc.ym-blank{background:transparent}
+.yr-mc.ym-other{background:var(--bd);opacity:.3}
+.yr-foot{padding:12px 10px 28px}
+
+/* ─── ADMIN ──────────────────────────────────────────────────── */
+.adm-tabs{display:flex;border-bottom:2px solid var(--bd);background:var(--surface);padding:0 12px}
+.adm-tab{padding:10px 14px;font-size:12px;font-weight:600;color:var(--mu);
+  border-bottom:2px solid transparent;margin-bottom:-2px;
+  transition:color .12s,border-color .12s;}
+.adm-tab.active{color:var(--primary);border-bottom-color:var(--primary)}
+.adm-tab:hover{color:var(--ink)}
+.adm-section{padding:12px}
+.adm-card{background:var(--surface);border:1px solid var(--bd);
+  border-radius:var(--r);margin-bottom:10px;overflow:hidden;}
+.adm-card-hdr{display:flex;align-items:center;gap:10px;padding:10px 14px;
+  border-bottom:1px solid var(--bd);}
+.adm-card-title{font-size:13px;font-weight:700;color:var(--ink);flex:1}
+.adm-prog-bar{height:5px;background:var(--bd);border-radius:3px;overflow:hidden;margin:0 14px 12px}
+.adm-prog-fill{height:100%;border-radius:3px;transition:width .4s ease}
+.adm-user-row{display:flex;align-items:center;gap:10px;padding:10px 14px}
+.adm-user-row+.adm-user-row{border-top:1px solid var(--bd)}
+.adm-user-info{flex:1;min-width:0}
+.adm-user-name{font-size:13px;font-weight:600;color:var(--ink)}
+.adm-user-email{font-size:10px;color:var(--mu);margin-top:1px;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.adm-role-badge{font-size:10px;font-weight:700;padding:3px 9px;border-radius:20px;
+  flex-shrink:0;white-space:nowrap;}
+.adm-del-btn{width:26px;height:26px;border-radius:5px;
+  background:var(--so-bg);border:1px solid var(--so-bd);
+  display:flex;align-items:center;justify-content:center;
+  font-size:13px;color:var(--so);flex-shrink:0;
+  transition:background .1s;}
+.adm-del-btn:hover{background:var(--so);color:#fff}
+.adm-form{padding:14px;display:flex;flex-direction:column;gap:10px}
+.adm-form-title{font-size:12px;font-weight:700;color:var(--ink2)}
+.adm-input{width:100%;padding:8px 11px;border:1px solid var(--bd);border-radius:6px;
+  font-size:13px;color:var(--ink);background:var(--surface);outline:none;
+  transition:border-color .12s;}
+.adm-input:focus{border-color:var(--primary-mid)}
+.adm-select{width:100%;padding:8px 11px;border:1px solid var(--bd);border-radius:6px;
+  font-size:13px;color:var(--ink);background:var(--surface);outline:none;
+  cursor:pointer;transition:border-color .12s;}
+.adm-select:focus{border-color:var(--primary-mid)}
+.adm-add-btn{width:100%;padding:10px;border-radius:6px;
+  background:var(--primary);color:#fff;font-size:13px;font-weight:700;
+  transition:background .12s;}
+.adm-add-btn:hover{background:var(--primary-mid)}
+.adm-add-btn:disabled{opacity:.4;cursor:not-allowed}
+.adm-msg{font-size:11px;text-align:center;padding:4px 0;
+  color:var(--sd);font-weight:600}
+.adm-warn{font-size:11px;text-align:center;padding:8px;
+  background:var(--su-bg);border:1px solid var(--su-bd);
+  border-radius:6px;color:var(--su);}
+
+/* ─── NO ACCESO ──────────────────────────────────────────────── */
+.err-wrap{min-height:100dvh;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;padding:32px;text-align:center;gap:12px}
+.err-ico{font-size:40px}
+.err-title{font-size:20px;font-weight:800;color:var(--ink);letter-spacing:-.5px}
+.err-body{font-size:13px;color:var(--mu);max-width:280px;line-height:1.6}
+.err-btn{margin-top:8px;padding:10px 24px;border-radius:var(--r);
+  background:var(--primary);color:#fff;font-size:13px;font-weight:700;}
+
+/* ─── TAREAS ADICIONALES ─────────────────────────────────────── */
+.add-task-btn{display:flex;align-items:center;justify-content:center;gap:8px;
+  width:100%;padding:12px;border-radius:var(--r);
+  background:var(--primary-lt);border:1px dashed var(--primary-mid);
+  font-size:13px;font-weight:600;color:var(--primary);
+  transition:background .12s,color .12s;}
+.add-task-btn:hover{background:var(--primary);color:#fff;border-style:solid}
+
+.t-card.is-extra{border-left:3px solid var(--primary-mid)}
+.x-tag{font-size:9px;font-weight:800;padding:2px 6px;border-radius:3px;
+  background:var(--primary-lt);color:var(--primary);letter-spacing:.5px;
+  border:1px solid var(--sa-bd);}
+.x-est{font-size:9px;font-weight:700;padding:2px 6px;border-radius:3px;
+  background:var(--su-bg);color:var(--su);border:1px solid var(--su-bd);}
+.x-by{font-size:10px;color:var(--mu2);margin-top:4px}
+.x-adm-row{display:flex;gap:6px;padding:8px 13px 10px 38px;border-top:1px solid var(--bd)}
+.x-adm-btn{display:inline-flex;align-items:center;gap:5px;font-size:11px;
+  font-weight:600;padding:5px 12px;border-radius:5px;
+  border:1px solid var(--bd);background:var(--surface);color:var(--mu);
+  transition:color .12s,border-color .12s,background .12s;}
+.x-adm-btn.edit:hover{color:var(--primary);border-color:var(--primary-mid);background:var(--primary-lt)}
+.x-adm-btn.del:hover{color:#fff;border-color:var(--so);background:var(--so)}
+
+/* ─── FORMULARIO NUEVA TAREA ─────────────────────────────────── */
+.nt-wrap{padding:12px 12px 28px;display:flex;flex-direction:column;gap:10px}
+.nt-card{background:var(--surface);border:1px solid var(--bd);border-radius:var(--r);
+  padding:16px;display:flex;flex-direction:column;gap:14px;}
+.nt-field{display:flex;flex-direction:column;gap:5px}
+.nt-label{font-size:11px;font-weight:700;color:var(--ink2);letter-spacing:.2px}
+.nt-hint{font-size:10px;color:var(--mu);font-weight:400;line-height:1.5}
+.nt-input,.nt-area,.nt-sel{width:100%;padding:9px 11px;border:1px solid var(--bd);
+  border-radius:6px;font-size:13px;color:var(--ink);background:var(--surface);
+  outline:none;transition:border-color .12s,box-shadow .12s;}
+.nt-input:focus,.nt-area:focus,.nt-sel:focus{
+  border-color:var(--primary-mid);box-shadow:0 0 0 3px var(--primary-lt)}
+.nt-area{min-height:78px;resize:vertical;line-height:1.5;font-family:inherit}
+.nt-sel{cursor:pointer}
+.nt-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.nt-sec{font-size:10px;letter-spacing:1.5px;text-transform:uppercase;
+  color:var(--mu);font-weight:700;padding-top:2px;
+  border-top:1px solid var(--bd);margin-top:2px;padding-top:12px;}
+.nt-save{width:100%;padding:12px;border-radius:var(--r);
+  background:var(--primary);color:#fff;font-size:14px;font-weight:700;
+  transition:background .12s;}
+.nt-save:hover{background:var(--primary-mid)}
+.nt-save:disabled{opacity:.5;cursor:not-allowed}
+.nt-cancel{width:100%;padding:10px;border-radius:var(--r);
+  background:var(--surface);border:1px solid var(--bd);
+  font-size:12px;font-weight:600;color:var(--mu);}
+.nt-cancel:hover{background:var(--sur2);color:var(--ink2)}
+.nt-msg{font-size:11px;text-align:center;padding:9px 11px;border-radius:6px;
+  font-weight:600;background:var(--sd-bg);color:var(--sd);border:1px solid var(--sd-bd);
+  line-height:1.5;}
+.nt-msg.err{background:var(--so-bg);color:var(--so);border-color:var(--so-bd)}
+.nt-note{font-size:11px;color:var(--mu);text-align:center;line-height:1.7;padding:2px 6px}
+.nt-lock{display:flex;align-items:flex-start;gap:8px;font-size:11px;
+  background:var(--su-bg);border:1px solid var(--su-bd);color:var(--su);
+  border-radius:6px;padding:9px 11px;line-height:1.5;font-weight:500;}
+
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+<div class="demo-bar">MODO DEMOSTRACIÓN · el progreso se guarda solo en este navegador y <b>no se comparte</b> con el equipo</div>
+<div id="app"></div>
+<style>.demo-bar{position:sticky;top:0;z-index:60;background:#B45309;color:#fff;font-size:11px;font-weight:600;text-align:center;padding:6px 12px;line-height:1.4}.demo-bar b{color:#FFE9BF}</style>
+<script>
+/* ── MODO DEMOSTRACIÓN ────────────────────────────────────────────
+   Sustituye Firebase por el almacenamiento local del navegador.
+   Sirve para ver y probar la app. El progreso NO se comparte entre
+   personas. Para uso real hay que montar Firebase (ver la guía).
+────────────────────────────────────────────────────────────────── */
+(function(){
+  var KEY='ies-demo-v1', DEL='__DELETE__';
+  function load(){try{return JSON.parse(localStorage.getItem(KEY))||{}}catch(e){return {}}}
+  var store=load();
+  function save(){localStorage.setItem(KEY,JSON.stringify(store));}
+  var subsDoc={}, subsColl={};
+  function snapDoc(p){var d=store[p];return{exists:d!==undefined,data:function(){return d||{}}};}
+  function snapColl(c){
+    var pre=c+'/';
+    var items=Object.keys(store).filter(function(k){return k.indexOf(pre)===0;})
+      .map(function(k){return {id:k.slice(pre.length),data:function(){return store[k];}};});
+    return {forEach:function(f){items.forEach(f);}};
+  }
+  function notifyDoc(p){(subsDoc[p]||[]).forEach(function(cb){cb(snapDoc(p));});}
+  function notifyColl(c){(subsColl[c]||[]).forEach(function(cb){cb(snapColl(c));});}
+
+  window.firebase={
+    initializeApp:function(){},
+    firestore:Object.assign(function(){return{
+      doc:function(p){return{
+        get:function(){return Promise.resolve(snapDoc(p));},
+        set:function(d,o){
+          if(o&&o.merge){
+            var cur={},k; for(k in (store[p]||{})) cur[k]=store[p][k];
+            Object.keys(d).forEach(function(kk){ d[kk]===DEL ? delete cur[kk] : cur[kk]=d[kk]; });
+            store[p]=cur;
+          } else store[p]=d;
+          save();notifyDoc(p);notifyColl(p.split('/')[0]);
+          return Promise.resolve();
+        },
+        update:function(d){Object.keys(d).forEach(function(k){(store[p]=store[p]||{})[k]=d[k];});
+          save();notifyDoc(p);notifyColl(p.split('/')[0]);return Promise.resolve();},
+        delete:function(){delete store[p];save();notifyDoc(p);notifyColl(p.split('/')[0]);return Promise.resolve();},
+        onSnapshot:function(cb){(subsDoc[p]=subsDoc[p]||[]).push(cb);cb(snapDoc(p));return function(){};}
+      };},
+      collection:function(c){return{
+        add:function(d){var id='x'+Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+          store[c+'/'+id]=d;save();notifyColl(c);return Promise.resolve();},
+        onSnapshot:function(cb){(subsColl[c]=subsColl[c]||[]).push(cb);cb(snapColl(c));return function(){};}
+      };}
+    };},{FieldValue:{delete:function(){return DEL;},serverTimestamp:function(){return new Date().toISOString();}}}),
+    auth:function(){return{
+      onAuthStateChanged:function(cb){
+        window.__IN=function(e){store.__user=e;save();cb({email:e});};
+        window.__OUT=function(){delete store.__user;save();cb(null);};
+        setTimeout(function(){cb(store.__user?{email:store.__user}:null);},20);
+      },
+      signInWithEmailAndPassword:function(email,pass){
+        var e=String(email||'').trim().toLowerCase();
+        if(!e||e.indexOf('@')<0){var x=new Error('mail');x.code='auth/invalid-email';return Promise.reject(x);}
+        if(String(pass||'').length<4){var y=new Error('pass');y.code='auth/wrong-password';return Promise.reject(y);}
+        window.__IN(e);return Promise.resolve();
+      },
+      signOut:function(){window.__OUT();return Promise.resolve();}
+    };}
+  };
+})();
+</script>
+<script>
+/* ══════════════════════════════════════════════════════════════════
+   PASO 1 ── Pega aquí tu configuración de Firebase
+   Encuéntrala en: console.firebase.google.com
+   → Tu proyecto → Configuración del proyecto → Tu app web
+══════════════════════════════════════════════════════════════════ */
+const FB_CFG = {
+  apiKey:            "PEGAR_API_KEY",
+  authDomain:        "PEGAR_PROJECT_ID.firebaseapp.com",
+  projectId:         "PEGAR_PROJECT_ID",
+  storageBucket:     "PEGAR_PROJECT_ID.appspot.com",
+  messagingSenderId: "PEGAR_SENDER_ID",
+  appId:             "PEGAR_APP_ID"
+};
+
+firebase.initializeApp(FB_CFG);
+const auth = firebase.auth();
+const db   = firebase.firestore();
+
+/* ══════════════════════════════════════════════════════════════════
+   CONFIGURACIÓN INICIAL DEL EQUIPO
+   La primera vez que el administrador entre, la app crea sola el
+   documento config/roles con estos datos. No hay que crearlo a mano.
+   Para cambiar un correo o agregar a alguien después, usar el
+   panel ADM → Usuarios dentro de la app.
+══════════════════════════════════════════════════════════════════ */
+const ADMIN_EMAIL = 'contabilidad@iesonline.com.co';
+
+const SEED_ROLES = {
+  'contabilidad@iesonline.com.co':       {name:'Cristian Bernal',      role:'admin',  personKey:'cristian'},
+  'tesoreria@iesonline.com.co':          {name:'Isnardi Sanches',      role:'member', personKey:'isnardi'},
+  'auxiliar.contable2@iesonline.com.co': {name:'Luis Santiago Amador', role:'member', personKey:'luis'},
+  'gerencia@iesonline.com.co':           {name:'Edgar Metaute',        role:'viewer', personKey:'edgar'},
+  'administrador@solucionesies.co':      {name:'Ingrithh Giraldo',     role:'viewer', personKey:'ingrrith'},
+};
+
+/* ─── CONSTANTES DE FECHA ──────────────────────────────────────── */
+const MF=['Enero','Febrero','Marzo','Abril','Mayo','Junio',
+          'Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+const DE=['domingo','lunes','martes','miércoles','jueves','viernes','sábado'];
+const NOW=new Date(), DAY=NOW.getDate(), MONTH=NOW.getMonth(), YEAR=NOW.getFullYear();
+const DINS=new Date(YEAR,MONTH+1,0).getDate();
+const IVA=new Set([0,2,4,6,8,10]).has(MONTH);
+
+/* ─── PERSONAS ─────────────────────────────────────────────────── */
+const P={
+  isnardi: {name:'Isnardi Sanches',   role:'Tesorera',               c:'#1B6B45',lt:'rgba(27,107,69,.12)',  init:'IS'},
+  luis:    {name:'Luis Amador',        role:'Aux. Contable',          c:'#1E3A8A',lt:'rgba(30,58,138,.12)',  init:'LA'},
+  cristian:{name:'Cristian Bernal',     role:'Contador',               c:'#5B21B6',lt:'rgba(91,33,182,.12)',  init:'CB'},
+  beatriz: {name:'Beatriz',            role:'Insumos Facturación',    c:'#0D6866',lt:'rgba(13,104,102,.12)', init:'B' },
+  edgar:   {name:'Edgar Metaute',     role:'Automatización / Siigo', c:'#78350F',lt:'rgba(120,53,15,.12)',  init:'EM'},
+  ingrrith:{name:'Ingrithh Giraldo',   role:'Supervisión',            c:'#7C3AED',lt:'rgba(124,58,237,.12)', init:'IG'},
+};
+
+/* ─── TAREAS ────────────────────────────────────────────────────── */
+const TASKS={
+  isnardi:[
+    {id:'is-rc', name:'RC — Cobros diarios en caja y bancos',
+     detail:'Registrar cada cobro de cliente en Siigo como Recibo de Caja (RC). Seleccionar las facturas que cubre y descargar la cartera del cliente.',
+     from:1,to:DINS,doc:'RC'},
+    {id:'is-rp', name:'RP — Pagos a proveedores · Anticipos Cta. 13',
+     detail:'Procesar los pagos a proveedores contra la CXP Cuenta 23 causada por Luis. Si hay orden de pago sin soporte documental, registrar como Anticipo en Cuenta 13.',
+     from:1,to:DINS,doc:'RP'},
+    {id:'is-cre',name:'Pagos avanzados — créditos y obligaciones financieras',
+     detail:'Al registrar el pago de una cuota de crédito, descomponer el valor total y llevar cada porción a su cuenta contable: abono a CAPITAL, INTERESES cobrados y GASTOS BANCARIOS adicionales (póliza, seguro de deudor, comisiones y estudio de crédito). La suma de las porciones debe cuadrar exactamente contra la salida de dinero registrada en el banco. Nunca cargar la cuota completa a una sola cuenta.',
+     from:1,to:DINS,doc:''},
+    {id:'is-ss', name:'Pago seguridad social a entidades',
+     detail:'Con el soporte de causación de Luis, pagar a salud, pensión, ARL y caja de compensación.',
+     from:13,to:15,doc:''},
+    {id:'is-n1', name:'Desembolso nómina 1ª quincena',
+     detail:'Realizar el desembolso de la primera quincena. Deducciones causadas y validadas por Luis entre los días 10–14.',
+     from:14,to:16,doc:''},
+    {id:'is-n2', name:'Desembolso nómina 2ª quincena',
+     detail:'Realizar el desembolso de la segunda quincena. Deducciones causadas y validadas por Luis entre los días 25–29.',
+     from:29,to:DINS,doc:''},
+  ],
+  luis:[
+    {id:'lu-prev',name:'Revisión pendientes del mes anterior',
+     detail:'Revisar causaciones sin cerrar del mes anterior y el RADIAN de los últimos días.',
+     from:1,to:2,doc:''},
+    {id:'lu-conc',name:'Conciliación bancaria — extractos y libro',
+     detail:'Los extractos bancarios llegan entre el día 3 y el 6. Iniciar la conciliación completa y generar el documento formal para validación del Contador.',
+     from:3,to:9,doc:''},
+    {id:'lu-tdc',name:'Conciliación tarjeta de crédito — validación de gastos con Edgar',
+     detail:'El extracto de la TDC llega alrededor del día 6. Conciliar y separar los gastos regulares del mes de los que no lo son. Los gastos no regulares se pasan a Edgar Metaute para que defina cuáles corresponden a VIÁTICOS y cuáles no. Sin esa definición no se puede cerrar la conciliación de tarjeta de crédito.',
+     from:6,to:10,doc:'TDC'},
+    {id:'lu-ss',  name:'Seguridad social — causación y envío a Tesorería',
+     detail:'Causar la seguridad social del mes anterior en Siigo. Compartir el soporte con Isnardi para el pago.',
+     from:10,to:13,doc:''},
+    {id:'lu-n1',  name:'Nómina 1ª quincena — proyección, causación y deducciones',
+     detail:'Proyectar y causar la nómina de la primera quincena. Validar todos los descuentos: préstamos, embargos y novedades.',
+     from:10,to:14,doc:''},
+    {id:'lu-rad', name:'RADIAN — Validación + revisión período del mes',
+     detail:'Días 15–21: cruzar facturas emitidas contra el RADIAN. Días 20–25: revisión del período. Coordinar visto bueno con Cristian.',
+     from:15,to:25,doc:'RADIAN'},
+    {id:'lu-caus',name:'Causaciones — FE / DS · Invoice exterior → CXP 23 · Cierre mes',
+     detail:'Días 22–25: causar documentos nacionales. Días 25–30: revisión conjunta con Cristian de todos los invoice del exterior — verifica que cada uno tenga su DS y causación completa.',
+     from:22,to:30,doc:'CXP 23'},
+    {id:'lu-n2',  name:'Nómina 2ª quincena — proyección, causación y deducciones',
+     detail:'Proyectar y causar la segunda quincena con todas sus deducciones.',
+     from:25,to:29,doc:''},
+    {id:'lu-ap',  name:'Archivo plano — facturación día 1 próximo mes',
+     detail:'Con el RADIAN revisado y el visto bueno de Cristian, generar el archivo plano para que la facturación del día 1 del mes siguiente salga sin demoras.',
+     from:26,to:DINS,doc:''},
+    {id:'lu-ds',  name:'Documento Soporte — invoice proveedores del exterior',
+     detail:'A medida que llegan los invoice del mes, generar el DS en Siigo, causar el gasto y crear la CXP Cuenta 23. SOLO el invoice es soporte válido — no cotización, contrato ni proyecto.',
+     from:1,to:DINS,doc:'DS'},
+  ],
+  cristian:[
+    {id:'cr-con', name:'Acompañamiento conciliación + validación saldos',
+     detail:'Al cierre (días 7–9) validar los saldos finales del documento formal y dar el visto bueno contable.',
+     from:1,to:9,doc:''},
+    {id:'cr-cie', name:'Cierre contable + retención en la fuente',
+     detail:'Ejecutar el cierre contable del mes anterior y liquidar la retención en la fuente. Vence días 15–21.',
+     from:10,to:14,doc:''},
+    {id:'cr-ssv', name:'Validación seguridad social antes del desembolso',
+     detail:'Validar la nómina y la seguridad social causada por Luis antes de que Isnardi realice el pago.',
+     from:10,to:13,doc:''},
+    {id:'cr-fe',  name:'Flujo de efectivo — descarga, organización y validación',
+     detail:'Descargar flujo de efectivo desde Siigo y organizar por actividades. Validar terceros y movimientos vs. libro mayor. Se adelanta al día 9 para descomprimir la semana del informe.',
+     from:9,to:12,doc:''},
+    {id:'cr-car', name:'Cartera por vigencias y por tercero desplegable',
+     detail:'Informe de cartera por vigencias: corriente, +30, +60, +90 días y años anteriores. Es INSUMO del dashboard y del informe a socios, por lo tanto debe estar listo antes del día 13.',
+     from:10,to:11,doc:''},
+    {id:'cr-rec', name:'Análisis de recaudo del mes',
+     detail:'Construir el análisis de recaudo: cuánto se cobró y de qué antigüedad proviene. Se apoya en el informe de cartera. Es INSUMO del dashboard y del informe a socios, debe estar listo antes del día 13.',
+     from:11,to:12,doc:''},
+    {id:'cr-esf', name:'EESF — desarrollo y validación contra Siigo',
+     detail:'Estado de Situación Financiera (activo/pasivo/patrimonio). Validar totales al centavo contra Siigo.',
+     from:12,to:13,doc:''},
+    {id:'cr-ers', name:'Estado de Resultados — desarrollo y validación contra Siigo',
+     detail:'Desarrollar el Estado de Resultados. Validar contra Siigo y estructurar para el dashboard.',
+     from:12,to:13,doc:''},
+    {id:'cr-bea', name:'Sesión con Beatriz — comentarios comerciales al informe',
+     detail:'Sentarse con Beatriz entre los días 10 y 12 para que ella coloque los comentarios comerciales al informe: ventas, clientes, recaudo y el contexto detrás de las cifras. Incorporar esos comentarios antes de subir el informe a Gerencia.',
+     from:10,to:12,doc:''},
+    {id:'cr-das', name:'Dashboard integral — construcción y entrega a Don Edgar',
+     detail:'Con todos los insumos validados y los comentarios comerciales de Beatriz incorporados, construir el dashboard ejecutivo. Día 15: entregar a Don Edgar.',
+     from:13,to:15,doc:''},
+    {id:'cr-edg', name:'Sesión con Edgar — feedback del informe antes de socios',
+     detail:'Sentarse con Edgar Metaute entre los días 13 y 14 para recibir dudas, inquietudes y propuestas de mejora sobre el informe. Ajustar lo que corresponda antes de que el informe pase a los socios.',
+     from:13,to:14,doc:''},
+    {id:'cr-soc', name:'Proceso con socios — revisión, análisis y cierre',
+     detail:'Acompañar el proceso completo con socios. Fecha límite: día 20.',
+     from:15,to:20,doc:''},
+    {id:'cr-rad', name:'RADIAN período del mes — validación contable',
+     detail:'Validar contablemente el RADIAN del período. Dar el visto bueno para que Luis proceda con el archivo plano.',
+     from:20,to:25,doc:'RADIAN'},
+    {id:'cr-ds',  name:'Visto bueno Documento Soporte — invoice proveedores del exterior',
+     detail:'Revisión conjunta con Luis al cierre del mes: verificar que cada invoice del exterior tenga su DS y causación completa en CXP Cuenta 23.',
+     from:25,to:DINS,doc:'DS'},
+    ...(IVA?[{id:'cr-iva',name:'Declaración IVA bimestral',
+     detail:'Preparar y presentar la declaración de IVA bimestral ante la DIAN. Meses: Ene, Mar, May, Jul, Sep, Nov. Vence días 15–21.',
+     from:15,to:21,doc:''}]:[]),
+  ],
+  beatriz:[
+    {id:'be-ins', name:'Insumos de facturación — cantidades, valores y tipos',
+     detail:'Preparar y entregar los insumos del período para que Edgar procese en Siigo.',
+     from:1,to:DINS,doc:''},
+    {id:'be-inf', name:'Comentarios comerciales al informe — sesión con el Contador',
+     detail:'Sentarse con Cristian entre los días 10 y 12 para revisar el informe del mes y colocarle los comentarios desde la visión comercial: comportamiento de ventas, situación de clientes, recaudo y todo el contexto que explique por qué las cifras se comportaron así. Estos comentarios se incorporan al informe antes de que pase a Gerencia.',
+     from:10,to:12,doc:''},
+  ],
+  edgar:[
+    {id:'ed-arc', name:'Organización del archivo plano en Siigo',
+     detail:'A partir del insumo de Beatriz, organizar el archivo plano en Siigo.',
+     from:1,to:5,doc:''},
+    {id:'ed-fe',  name:'Emisión de facturas electrónicas — Siigo → DIAN / RADIAN',
+     detail:'Procesar y emitir las facturas electrónicas desde Siigo ERP.',
+     from:1,to:5,doc:'FE'},
+    {id:'ed-inf', name:'Feedback del informe — sesión con el Contador',
+     detail:'Sentarse con Cristian entre los días 13 y 14 para revisar el informe del mes ANTES de que pase a los socios: plantear dudas e inquietudes sobre las cifras y proponer mejoras al contenido y a la presentación. El feedback se incorpora antes de la entrega del día 15.',
+     from:13,to:14,doc:''},
+    {id:'ed-tdc', name:'Validación gastos TDC — definir viáticos',
+     detail:'Recibir de Luis los gastos no regulares del extracto de tarjeta de crédito (llega hacia el día 6) y definir cuáles corresponden a viáticos y cuáles no. Esta definición es la que habilita el cierre de la conciliación de tarjeta.',
+     from:6,to:10,doc:'TDC'},
+    {id:'ed-cie', name:'Procesa archivo plano de Luis — facturación día 1',
+     detail:'Recibir el archivo plano de Luis entre los días 25–30 y procesarlo en Siigo.',
+     from:26,to:DINS,doc:''},
+  ],
+};
+
+/* ─── ESTADO ────────────────────────────────────────────────────── */
+let cu=null, ucfg=null, allRoles={}, prog={}, unsubProg=null;
+let extraTasks={}, unsubExtra=null;
+let screen='loading', curPerson=null, expanded=new Set();
+let calDay=DAY, viewMonth=MONTH;
+let adminTab='progress';
+let admMsg='', admMsgErr=false;
+let ntTarget=null, ntEditing=null, ntMsg='', ntMsgErr=false;
+
+/* ─── UTILIDADES ────────────────────────────────────────────────── */
+const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+const dspan=(f,t)=>f===1&&t===DINS?'Todo el mes':`Días ${f}–${t}`;
+const progDoc=()=>`${YEAR}-${String(MONTH+1).padStart(2,'0')}`;
+const isoOf=d=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+const TODAY_ISO=isoOf(NOW);
+const ymOf=m=>`${YEAR}-${String(m+1).padStart(2,'0')}`;
+
+/* Tipos de tarea sugeridos para el formulario */
+const TIPOS=['Causación','Conciliación','Pago','Informe','Revisión','Declaración',
+             'Documento Soporte','Nómina','Seguridad Social','Cartera','Cierre','Otro'];
+
+/* Tareas extra de una persona en un mes dado (por defecto, el mes actual) */
+function extrasFor(pk,m){
+  const ym=ymOf(m===undefined?MONTH:m);
+  return Object.entries(extraTasks)
+    .filter(([,t])=>t.personKey===pk&&t.ym===ym)
+    .map(([xid,t])=>({...t,id:'x-'+xid,xid,name:t.tipo,detail:t.detalle,extra:true}))
+    .sort((a,b)=>a.from-b.from);
+}
+/* Tareas base + extras */
+function tasksFor(pk,m){
+  return [...(TASKS[pk]||[]),...extrasFor(pk,m)];
+}
+/* Personas con alguna tarea (base o extra) en el mes */
+function activePeople(m){
+  return Object.keys(P).filter(k=>tasksFor(k,m).length>0);
+}
+
+const SC={
+  done:    {lbl:'Completado',    c:'var(--sd)',bg:'var(--sd-bg)',icon:'✓',ord:4},
+  active:  {lbl:'Activo ahora', c:'var(--sa)',bg:'var(--sa-bg)',icon:'●',ord:1},
+  overdue: {lbl:'Vencido',      c:'var(--so)',bg:'var(--so-bg)',icon:'!',ord:0},
+  upcoming:{lbl:'Próximo',      c:'var(--su)',bg:'var(--su-bg)',icon:'◷',ord:2},
+  future:  {lbl:'Pendiente',    c:'var(--sf)',bg:'var(--sf-bg)',icon:'○',ord:3},
+};
+
+function getStatus(t){
+  if(prog[t.id])             return 'done';
+  if(t.to<DAY)               return 'overdue';
+  if(t.from<=DAY&&t.to>=DAY)return 'active';
+  if(t.from>DAY&&t.from<=DAY+4)return 'upcoming';
+  return 'future';
+}
+
+// Can this user mark tasks for a given personKey?
+function canMark(personKey){
+  if(!ucfg) return false;
+  if(ucfg.role==='admin') return true;
+  if(ucfg.role==='viewer') return false;
+  return ucfg.personKey===personKey;
+}
+// Cualquier usuario autenticado puede REGISTRAR tareas nuevas
+function canCreate(){ return !!ucfg; }
+// SOLO el administrador (Cristian Bernal) puede EDITAR o ELIMINAR tareas
+function canEditTasks(){ return !!ucfg && ucfg.role==='admin'; }
+
+function roleBadgeHTML(role){
+  const map={
+    admin: {bg:'var(--primary-lt)',c:'var(--primary)',lbl:'Admin'},
+    member:{bg:'var(--sa-bg)',     c:'var(--sa)',     lbl:'Miembro'},
+    viewer:{bg:'var(--sf-bg)',     c:'var(--sf)',     lbl:'Solo lectura'},
+  };
+  const s=map[role]||{bg:'var(--bg)',c:'var(--mu)',lbl:role};
+  return `<span class="adm-role-badge" style="background:${s.bg};color:${s.c}">${s.lbl}</span>`;
+}
+
+/* ─── FIRESTORE ─────────────────────────────────────────────────── */
+// Devuelve {exists:bool, cfg:objeto|null} para distinguir
+// "no hay configuración todavía" de "este usuario no está habilitado"
+async function loadUserConfig(email){
+  const snap=await db.doc('config/roles').get();
+  if(!snap.exists) return {exists:false,cfg:null};
+  const d=snap.data();
+  return {exists:true, cfg:d[email]||null};
+}
+async function seedRoles(){
+  await db.doc('config/roles').set(SEED_ROLES);
+}
+async function loadAllRoles(){
+  const snap=await db.doc('config/roles').get();
+  return snap.exists?snap.data():{};
+}
+function subscribeProgress(){
+  if(unsubProg) unsubProg();
+  unsubProg=db.doc('progress/'+progDoc()).onSnapshot(snap=>{
+    prog=snap.exists?snap.data():{};
+    if(screen==='dashboard'||screen==='team'||screen==='landing'||
+       screen==='calendar'||screen==='year'||screen==='admin') {
+      render();
+    }
+  });
+}
+async function toggleTask(taskId){
+  if(!cu) return;
+  const ref=db.doc('progress/'+progDoc());
+  if(prog[taskId]){
+    await ref.set({[taskId]:firebase.firestore.FieldValue.delete()},{merge:true});
+  } else {
+    await ref.set({[taskId]:true},{merge:true});
+  }
+}
+async function saveAllRoles(roles){
+  await db.doc('config/roles').set(roles);
+  allRoles=roles;
+}
+
+/* ─── TAREAS ADICIONALES ────────────────────────────────────────── */
+function subscribeExtras(){
+  if(unsubExtra) unsubExtra();
+  unsubExtra=db.collection('extraTasks').onSnapshot(snap=>{
+    const o={};
+    snap.forEach(d=>{o[d.id]=d.data();});
+    extraTasks=o;
+    if(screen!=='login'&&screen!=='loading'&&screen!=='error') render();
+  });
+}
+async function createExtra(data){
+  await db.collection('extraTasks').add({
+    ...data,
+    createdBy:cu.email,
+    createdByName:ucfg.name,
+    createdAt:firebase.firestore.FieldValue.serverTimestamp(),
+  });
+}
+async function updateExtra(xid,data){
+  await db.doc('extraTasks/'+xid).update({
+    ...data,
+    updatedBy:cu.email,
+    updatedAt:firebase.firestore.FieldValue.serverTimestamp(),
+  });
+}
+async function deleteExtra(xid){
+  await db.doc('extraTasks/'+xid).delete();
+  await db.doc('progress/'+progDoc())
+    .set({['x-'+xid]:firebase.firestore.FieldValue.delete()},{merge:true});
+}
+
+/* ─── AUTH ──────────────────────────────────────────────────────── */
+async function doLogin(email,password){
+  return auth.signInWithEmailAndPassword(email.trim().toLowerCase(),password);
+}
+// ¿Este correo está en la lista autorizada del equipo?
+function estaAutorizado(email){
+  return Object.prototype.hasOwnProperty.call(SEED_ROLES, String(email||'').trim().toLowerCase());
+}
+// Primera vez: la persona define su propia contraseña.
+// Solo funciona con los correos de la lista autorizada.
+async function doRegister(email,password){
+  const e=String(email||'').trim().toLowerCase();
+  if(!estaAutorizado(e)){
+    const err=new Error('no autorizado'); err.code='ies/no-autorizado'; throw err;
+  }
+  return auth.createUserWithEmailAndPassword(e,password);
+}
+async function doLogout(){
+  if(unsubProg){unsubProg();unsubProg=null;}
+  if(unsubExtra){unsubExtra();unsubExtra=null;}
+  cu=null;ucfg=null;allRoles={};prog={};extraTasks={};
+  await auth.signOut();
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   RENDER FUNCTIONS
+═══════════════════════════════════════════════════════════════════ */
+
+function renderLoading(){
+  return `<div class="load-wrap">
+    <div class="spin"></div>
+    <div class="load-txt">Cargando…</div>
+  </div>`;
+}
+
+function renderError(){
+  return `<div class="err-wrap">
+    <div class="err-ico">🔒</div>
+    <div class="err-title">Acceso no configurado</div>
+    <div class="err-body">Tu cuenta no ha sido habilitada. Contacta al administrador (Cristian Bernal) para que active tu acceso.</div>
+    <button class="err-btn" data-action="logout">Cerrar sesión</button>
+  </div>`;
+}
+
+/* ─── CONFIGURACIÓN INICIAL (primera vez) ────────────────────────── */
+let setupMsg='', setupErr=false;
+
+function renderSetup(){
+  const esAdmin = cu && cu.email === ADMIN_EMAIL;
+
+  const filas=Object.entries(SEED_ROLES).map(([email,c])=>{
+    const p=P[c.personKey];
+    return `<div class="adm-user-row">
+      <div class="p-av" style="background:${p?p.c:'var(--mu)'};width:32px;height:32px;border-radius:6px;font-size:10px;flex-shrink:0">${p?p.init:'?'}</div>
+      <div class="adm-user-info">
+        <div class="adm-user-name">${esc(c.name)}</div>
+        <div class="adm-user-email">${esc(email)}</div>
+      </div>
+      ${roleBadgeHTML(c.role)}
+    </div>`;
+  }).join('');
+
+  const msg=setupMsg?`<div class="nt-msg${setupErr?' err':''}">${esc(setupMsg)}</div>`:'';
+
+  const accion = esAdmin
+    ? `<button class="nt-save" id="setup-go">Crear configuración del equipo</button>`
+    : `<div class="nt-lock"><span>🔒</span><span>La configuración inicial la debe crear el administrador
+         (${esc(ADMIN_EMAIL)}). Pídele que entre una vez y luego vuelve a iniciar sesión.</span></div>`;
+
+  return `
+  <div class="log-top" style="padding:36px 24px 26px">
+    <div class="log-ies" style="font-size:38px">IES</div>
+    <div class="log-title">Configuración inicial</div>
+    <div class="log-sub">Solo se hace una vez</div>
+  </div>
+  <div class="nt-wrap">
+    <div class="nt-card">
+      <div style="font-size:13px;color:var(--ink2);line-height:1.6">
+        Esta es la primera vez que se abre la aplicación. Al continuar se crean
+        los accesos del equipo con los roles que ya están definidos.
+      </div>
+      <div class="adm-card" style="margin:0">
+        ${filas}
+      </div>
+      <div class="nt-hint">
+        Después puedes agregar, cambiar o quitar personas desde
+        <strong>ADM → Usuarios</strong>. Recuerda que cada persona además necesita
+        su cuenta creada en Firebase (Authentication → Users).
+      </div>
+      ${msg}
+      ${accion}
+      <button class="nt-cancel" data-action="logout">Cerrar sesión</button>
+    </div>
+  </div>`;
+}
+
+function renderLogin(){
+  return `<div class="log-wrap">
+    <div class="log-top">
+      <div class="log-ies">IES</div>
+      <div class="log-title">Procesos Contables</div>
+      <div class="log-sub">Sistema de seguimiento · ${YEAR}</div>
+    </div>
+    <div class="log-body">
+      <div class="log-card">
+        <div class="log-field">
+          <label class="log-label" for="log-email">Correo electrónico</label>
+          <input class="log-input" id="log-email" type="email" autocomplete="email"
+            placeholder="tu@correo.com" autofocus>
+        </div>
+        <div class="log-field">
+          <label class="log-label" for="log-pass">Contraseña</label>
+          <input class="log-input" id="log-pass" type="password" autocomplete="current-password"
+            placeholder="••••••••">
+        </div>
+        <div id="log-err" style="display:none" class="log-err"></div>
+        <button class="log-btn" id="log-submit">Entrar</button>
+        <button class="nt-cancel" id="log-first" style="margin-top:2px">
+          Primera vez — crear mi contraseña
+        </button>
+      </div>
+    </div>
+    <div class="log-foot">
+      <strong>¿Es tu primera vez?</strong> Escribe tu correo de trabajo,
+      inventa una contraseña de 6 caracteres o más y pulsa
+      <em>Primera vez — crear mi contraseña</em>.<br>
+      Esa será tu contraseña de aquí en adelante.<br><br>
+      IES · Sistema interno de seguimiento contable · Solo personal autorizado
+    </div>
+  </div>`;
+}
+
+/* ─── HEADER COMPARTIDO ─────────────────────────────────────────── */
+function appHeader({title,sub,back,color,showAdmin}){
+  const bg=color||'var(--primary)';
+  const backBtn=back
+    ?`<button class="d-back" data-action="back">‹</button>`
+    :`<div class="ies-badge" style="flex-shrink:0">IES</div>`;
+  const adminBtn=showAdmin
+    ?`<button class="hdr-icon-btn" data-action="admin" title="Panel Admin" style="font-size:13px;font-weight:700">ADM</button>`
+    :'';
+  const logoutBtn=`<button class="hdr-icon-btn" data-action="logout" title="Cerrar sesión" style="font-size:16px">⏻</button>`;
+  return `<div class="app-hdr" style="background:${bg}">
+    ${backBtn}
+    <div class="app-hdr-title">
+      <div class="app-hdr-t">${title}</div>
+      ${sub?`<div class="app-hdr-s">${sub}</div>`:''}
+    </div>
+    ${adminBtn}
+    ${logoutBtn}
+  </div>`;
+}
+
+/* ─── LANDING ────────────────────────────────────────────────────── */
+function renderLanding(){
+  const isAdmin=ucfg&&ucfg.role==='admin';
+  const dstr=`${DE[NOW.getDay()]}, ${DAY} de ${MF[MONTH]} ${YEAR}`;
+  const greeting=ucfg?`Hola, ${ucfg.name.split(' ')[0]}`:'Hola';
+
+  const cards=activePeople()
+    .map(k=>{
+      const p=P[k];
+      const tasks=tasksFor(k);
+      const over  =tasks.filter(t=>t.to<DAY&&!prog[t.id]).length;
+      const active=tasks.filter(t=>t.from<=DAY&&t.to>=DAY&&!prog[t.id]).length;
+      const done  =tasks.filter(t=>!!prog[t.id]).length;
+      const pct   =tasks.length?Math.round(done/tasks.length*100):0;
+      let chip='';
+      if(over>0)
+        chip=`<span class="p-chip" style="background:var(--so-bg);color:var(--so);border-color:var(--so-bd)">! ${over} vencid${over>1?'as':'a'}</span>`;
+      else if(active>0)
+        chip=`<span class="p-chip" style="background:var(--sa-bg);color:var(--sa);border-color:var(--sa-bd)">${active} activ${active>1?'as':'a'}</span>`;
+      else
+        chip=`<span class="p-chip" style="background:var(--bg);color:var(--mu);border-color:var(--bd)">${pct}%</span>`;
+      return `<button class="p-card" data-action="person" data-key="${k}">
+        <div class="p-av" style="background:${p.c}">${p.init}</div>
+        <div class="p-info">
+          <div class="p-name">${p.name}</div>
+          <div class="p-role">${p.role}</div>
+        </div>
+        ${chip}
+        <span class="p-arr">›</span>
+      </button>`;
+    }).join('');
+
+  return `
+  ${appHeader({title:'Procesos Contables',sub:'IES · '+YEAR,showAdmin:isAdmin})}
+  <div class="l-banner">
+    <div class="l-welcome">${greeting}</div>
+  </div>
+  <div class="l-tagline">¿Qué tenemos<br>que hacer <em>hoy?</em></div>
+  <div class="l-sec">Progreso del equipo</div>
+  <div class="l-list">${cards}</div>
+  <div class="l-bottom">
+    ${canCreate()?`<button class="add-task-btn" data-action="newtask">+ Registrar tarea adicional</button>`:''}
+    <button class="ghost-btn" data-action="year">Ver año completo · ${YEAR}</button>
+    <button class="ghost-btn" data-action="calendar">Calendario de ${MF[MONTH]} — tareas por día</button>
+    <button class="ghost-btn" data-action="team">Ver qué hace el equipo hoy</button>
+    <p class="l-note">${dstr} · Progreso sincronizado en tiempo real</p>
+  </div>`;
+}
+
+/* ─── DASHBOARD ──────────────────────────────────────────────────── */
+function renderDashboard(k){
+  const p=P[k];
+  const tasks=tasksFor(k);
+  const total=tasks.length;
+  const done=tasks.filter(t=>!!prog[t.id]).length;
+  const pct=total?Math.round(done/total*100):0;
+  const canEdit=canMark(k);
+
+  const withSt=tasks.map(t=>({...t,st:getStatus(t)}))
+    .sort((a,b)=>SC[a.st].ord-SC[b.st].ord);
+  const active=withSt.filter(t=>t.st==='active').length;
+  const over=withSt.filter(t=>t.st==='overdue').length;
+
+  const groups=['overdue','active','upcoming','future','done']
+    .map(s=>({s,items:withSt.filter(t=>t.st===s)})).filter(g=>g.items.length);
+
+  const taskHTML=groups.map(g=>{
+    const cfg=SC[g.s];
+    const items=g.items.map(t=>{
+      const isExp=expanded.has(t.id);
+      const chk=prog[t.id]?'checked':'';
+      const isDone=t.st==='done';
+      const isX=!!t.extra;
+      return `<div class="t-card st-${t.st}${isX?' is-extra':''}">
+        <div class="t-main">
+          <input type="checkbox" class="t-cb" data-tid="${esc(t.id)}"
+            ${chk} ${canEdit?'':'disabled'} aria-label="${esc(t.name)}">
+          <div class="t-body">
+            <div class="t-name">${esc(t.name)}</div>
+            <div class="t-meta">
+              <span class="t-days">${dspan(t.from,t.to)}</span>
+              <span class="t-badge" style="background:${cfg.bg};color:${cfg.c}">${cfg.lbl}</span>
+              ${isX?`<span class="x-tag">ADICIONAL</span>`:''}
+              ${isX&&t.horas?`<span class="x-est">≈ ${esc(t.horas)} h</span>`:''}
+              ${t.doc?`<span class="t-doc">${esc(t.doc)}</span>`:''}
+            </div>
+            ${isX?`<div class="x-by">Registrada por ${esc(t.createdByName||'—')}${t.fecha?` · solicitud ${esc(t.fecha)}`:''}</div>`:''}
+          </div>
+          <button class="t-exp" data-action="expand" data-tid="${esc(t.id)}">${isExp?'▲':'▼'}</button>
+        </div>
+        <div class="t-det${isExp?' open':''}" id="det-${esc(t.id)}">${esc(t.detail)}</div>
+        ${isX&&canEditTasks()?`<div class="x-adm-row">
+          <button class="x-adm-btn edit" data-action="xedit" data-xid="${esc(t.xid)}">✎ Editar</button>
+          <button class="x-adm-btn del"  data-action="xdel"  data-xid="${esc(t.xid)}">Eliminar</button>
+        </div>`:''}
+        ${isDone&&canEdit?`<div class="revert-row">
+          <button class="revert-btn" data-action="revert" data-tid="${esc(t.id)}">↩ Revertir actividad</button>
+        </div>`:''}
+      </div>`;
+    }).join('');
+    return `<div class="tg-wrap">
+      <div class="tg-hdr">
+        <div class="tg-ico" style="background:${cfg.bg};color:${cfg.c}">${cfg.icon}</div>
+        <div class="tg-lbl" style="color:${cfg.c}">${cfg.lbl}</div>
+        <div class="tg-cnt">${g.items.length}</div>
+      </div>
+      ${items}
+    </div>`;
+  }).join('');
+
+  const chips=[
+    over>0  ?`<div class="chip-s" style="background:var(--so-bg);color:var(--so)"><span class="chip-dot"></span>${over} vencid${over>1?'as':'a'}</div>`:'',
+    active>0?`<div class="chip-s" style="background:var(--sa-bg);color:var(--sa)"><span class="chip-dot"></span>${active} activ${active>1?'as':'a'}</div>`:'',
+    done>0  ?`<div class="chip-s" style="background:var(--sd-bg);color:var(--sd)"><span class="chip-dot"></span>${done} completad${done>1?'as':'a'}</div>`:'',
+  ].filter(Boolean).join('');
+
+  const isAdmin=ucfg&&ucfg.role==='admin';
+  const roLabel=!canEdit?'<span style="font-size:10px;color:var(--su);font-weight:600;background:var(--su-bg);padding:3px 8px;border-radius:4px">Solo lectura</span>':'';
+
+  return `
+  ${appHeader({title:p.name,sub:p.role,back:true,color:p.c,showAdmin:isAdmin})}
+  <div class="sum-wrap">
+    <div class="sum-card">
+      <div class="sum-row">
+        <div class="sum-left">
+          <div class="sum-eyebrow">Progreso · ${MF[MONTH]} ${YEAR}</div>
+          <div class="sum-frac">
+            <span class="sum-frac-n" style="color:${p.c}">${done}</span>
+            <span class="sum-frac-d">/ ${total}</span>
+          </div>
+          <div class="sum-frac-lbl">tareas completadas este mes</div>
+          ${roLabel}
+        </div>
+        <div class="sum-right">
+          <div class="sum-dn" style="color:${p.c}">${DAY}</div>
+          <div class="sum-dl">${MF[MONTH]}<br>${YEAR}</div>
+        </div>
+      </div>
+      <div class="pbar-bg"><div class="pbar-fill" style="width:${pct}%;background:${p.c}"></div></div>
+      <div class="pbar-meta"><span>${pct}% completado</span><span>${total-done} por completar</span></div>
+      ${chips?`<div class="chips">${chips}</div>`:''}
+    </div>
+  </div>
+  ${taskHTML}
+  <div class="d-foot">
+    ${canCreate()?`<button class="add-task-btn" data-action="newtask" data-key="${k}" style="margin-bottom:8px">+ Registrar tarea adicional para ${esc(p.name.split(' ')[0])}</button>`:''}
+    <button class="export-btn" data-action="export" data-key="${k}">↓ Exportar estado de ${MF[MONTH]}</button>
+  </div>`;
+}
+
+/* ─── EQUIPO ─────────────────────────────────────────────────────── */
+function renderTeam(){
+  const isAdmin=ucfg&&ucfg.role==='admin';
+  const cards=activePeople()
+    .map(k=>{
+      const p=P[k];
+      const active=tasksFor(k).filter(t=>t.from<=DAY&&t.to>=DAY);
+      const doneToday=active.filter(t=>prog[t.id]);
+      return `<div class="tm-card">
+        <div class="tm-ch">
+          <div class="p-av" style="background:${p.c};width:36px;height:36px;border-radius:7px;font-size:11px">${p.init}</div>
+          <div style="flex:1;min-width:0">
+            <div class="p-name" style="font-size:13px">${p.name}</div>
+            <div class="p-role">${p.role}</div>
+          </div>
+          ${active.length>0
+            ?`<span class="p-chip" style="background:var(--sa-bg);color:var(--sa);border:1px solid var(--sa-bd)">${doneToday.length}/${active.length}</span>`
+            :`<span class="p-chip" style="background:var(--bg);color:var(--mu);border:1px solid var(--bd)">—</span>`}
+        </div>
+        <div class="tm-tasks">
+          ${active.length>0
+            ?active.map(t=>`<div class="tm-row${prog[t.id]?' tm-done-row':''}">
+                <div class="tm-dot" style="background:${prog[t.id]?'var(--sd)':p.c}"></div>
+                <div class="tm-tn">${esc(t.name)}${t.extra?' <span class="x-tag">ADIC.</span>':''}</div>
+                <div class="tm-td">D${t.from}–${t.to}</div>
+              </div>`).join('')
+            :`<div class="tm-empty">Sin tareas activas hoy</div>`}
+        </div>
+      </div>`;
+    }).join('');
+
+  return `
+  ${appHeader({title:'Equipo · Día '+DAY,sub:`Tareas activas hoy · ${MF[MONTH]} ${YEAR}`,showAdmin:isAdmin})}
+  <div class="tm-body">${cards}</div>
+  <div class="tm-foot"><button class="ghost-btn" data-action="back">← Volver al inicio</button></div>`;
+}
+
+/* ─── CALENDARIO ─────────────────────────────────────────────────── */
+function getDins(m){return new Date(YEAR,m+1,0).getDate();}
+function personsOnDay(d,vD,m){
+  if(d<1||d>vD) return [];
+  return Object.keys(P).filter(k=>tasksFor(k,m).some(t=>t.from<=d&&t.to>=d));
+}
+function tasksOnDay(d,vD,m){
+  if(d<1||d>vD) return [];
+  const r=[];
+  Object.keys(P).forEach(k=>{
+    tasksFor(k,m).filter(t=>t.from<=d&&t.to>=d).forEach(t=>r.push({...t,pk:k}));
+  });
+  return r;
+}
+function buildCells(m){
+  const vD=getDins(m);
+  const firstDow=new Date(YEAR,m,1).getDay();
+  const off=(firstDow+6)%7;
+  const cells=[];
+  for(let i=0;i<off;i++) cells.push(null);
+  for(let d=1;d<=vD;d++) cells.push(d);
+  while(cells.length%7!==0) cells.push(null);
+  return {cells,vD};
+}
+
+function renderCalendar(){
+  const isAdmin=ucfg&&ucfg.role==='admin';
+  const DN=['Lun','Mar','Mié','Jue','Vie','Sáb','Dom'];
+  const {cells,vD}=buildCells(viewMonth);
+  const isCM=(viewMonth===MONTH);
+
+  const gridHTML=cells.map(d=>{
+    if(d===null) return `<div class="cal-cell other-month"></div>`;
+    const isToday=isCM&&d===DAY, isSel=d===calDay;
+    const persons=personsOnDay(d,vD,viewMonth);
+    const dots=persons.map(pk=>`<div class="cal-dot" style="background:${P[pk].c}"></div>`).join('');
+    const cls=['cal-cell',isToday?'today':'',isSel?'selected':''].filter(Boolean).join(' ');
+    const nc=['cal-num',isToday?'today-n':(isSel?'sel-n':'')].filter(Boolean).join(' ');
+    return `<div class="${cls}" data-action="calday" data-day="${d}">
+      <div class="${nc}">${d}</div>
+      <div class="cal-dots">${dots}</div>
+    </div>`;
+  }).join('');
+
+  let detHTML='';
+  if(calDay!==null){
+    const dayTasks=tasksOnDay(calDay,vD,viewMonth);
+    const hdr=`<div class="cal-panel-hdr">
+      Día ${calDay} de ${MF[viewMonth]}
+      <span class="cal-panel-count">${dayTasks.length} tarea${dayTasks.length!==1?'s':''}</span>
+    </div>`;
+    if(dayTasks.length===0){
+      detHTML=`<div class="cal-panel"><div class="cal-panel-card">${hdr}<div class="cal-empty">Sin tareas programadas para este día</div></div></div>`;
+    } else {
+      const rows=dayTasks.map(t=>{
+        const p=P[t.pk],isDone=isCM&&!!prog[t.id];
+        return `<div class="cal-trow">
+          <div class="cal-tav" style="background:${p.c}">${p.init}</div>
+          <div class="cal-tinfo">
+            <div class="cal-tname${isDone?' done':''}">${esc(t.name)}${t.extra?' <span class="x-tag">ADIC.</span>':''}</div>
+            <div class="cal-tperson">${esc(p.name)} · Días ${t.from}–${t.to}</div>
+          </div>
+          ${t.doc?`<div class="cal-tdoc">${esc(t.doc)}</div>`:''}
+        </div>`;
+      }).join('');
+      detHTML=`<div class="cal-panel"><div class="cal-panel-card">${hdr}${rows}</div></div>`;
+    }
+  }
+
+  const prevM=(viewMonth+11)%12, nextM=(viewMonth+1)%12;
+  const legend=activePeople(viewMonth)
+    .map(k=>`<div class="cal-leg-item"><div class="cal-leg-dot" style="background:${P[k].c}"></div>${P[k].name.split(' ')[0]}</div>`)
+    .join('');
+  const dnHdr=DN.map(n=>`<div class="cal-dn">${n}</div>`).join('');
+
+  return `
+  ${appHeader({title:`Calendario · ${MF[viewMonth]}`,sub:YEAR+'',showAdmin:isAdmin})}
+  <div class="cal-dnames">${dnHdr}</div>
+  <div class="cal-nav">
+    <button class="cal-nav-btn" data-action="calmonth" data-m="${prevM}">‹</button>
+    <span class="cal-nav-label">${MF[viewMonth]} ${YEAR}</span>
+    <button class="cal-nav-btn" data-action="calmonth" data-m="${nextM}">›</button>
+  </div>
+  <div class="cal-grid">${gridHTML}</div>
+  <div class="cal-legend">${legend}</div>
+  ${detHTML}
+  <div class="cal-foot">
+    <button class="ghost-btn" data-action="back">← Volver al inicio</button>
+  </div>`;
+}
+
+/* ─── VISTA AÑO ──────────────────────────────────────────────────── */
+function renderYear(){
+  const isAdmin=ucfg&&ucfg.role==='admin';
+  const cards=MF.map((mName,mi)=>{
+    const {cells,vD}=buildCells(mi);
+    const mini=cells.map(d=>{
+      if(d===null) return `<div class="yr-mc ym-blank"></div>`;
+      const ps=personsOnDay(d,vD,mi);
+      if(!ps.length) return `<div class="yr-mc ym-other"></div>`;
+      return `<div class="yr-mc" style="background:${P[ps[0]].c};opacity:.85"></div>`;
+    }).join('');
+    const isCur=mi===MONTH, isSel=mi===viewMonth;
+    const cls=['yr-card',isCur?'yr-cur':'',isSel?'yr-sel':''].filter(Boolean).join(' ');
+    return `<div class="${cls}" data-action="yearmonth" data-mi="${mi}">
+      <div class="yr-mname">${mName}</div>
+      <div class="yr-mini-grid">${mini}</div>
+    </div>`;
+  }).join('');
+
+  const legend=activePeople()
+    .map(k=>`<div class="cal-leg-item"><div class="cal-leg-dot" style="background:${P[k].c}"></div>${P[k].name.split(' ')[0]}</div>`)
+    .join('');
+
+  return `
+  ${appHeader({title:`Año ${YEAR} · Vista completa`,sub:'Toca un mes para ver en detalle',showAdmin:isAdmin})}
+  <div class="yr-grid">${cards}</div>
+  <div class="cal-legend" style="padding:8px 10px 10px">${legend}</div>
+  <div class="yr-foot"><button class="ghost-btn" data-action="back">← Volver al inicio</button></div>`;
+}
+
+/* ─── ADMIN ──────────────────────────────────────────────────────── */
+function renderAdmin(){
+  const tabs=`<div class="adm-tabs">
+    <button class="adm-tab${adminTab==='progress'?' active':''}" data-action="admtab" data-tab="progress">Progreso del equipo</button>
+    <button class="adm-tab${adminTab==='users'?' active':''}" data-action="admtab" data-tab="users">Usuarios</button>
+  </div>`;
+
+  let body='';
+
+  if(adminTab==='progress'){
+    const cards=activePeople()
+      .map(k=>{
+        const p=P[k];
+        const tasks=tasksFor(k);
+        const done=tasks.filter(t=>!!prog[t.id]).length;
+        const pct=tasks.length?Math.round(done/tasks.length*100):0;
+        const over=tasks.filter(t=>t.to<DAY&&!prog[t.id]).length;
+        const active=tasks.filter(t=>t.from<=DAY&&t.to>=DAY&&!prog[t.id]).length;
+        let chip='';
+        if(over>0) chip=`<span class="p-chip" style="background:var(--so-bg);color:var(--so);border-color:var(--so-bd)">! ${over}</span>`;
+        else if(active>0) chip=`<span class="p-chip" style="background:var(--sa-bg);color:var(--sa);border-color:var(--sa-bd)">${active} activ${active>1?'as':'a'}</span>`;
+        return `<div class="adm-card" style="cursor:pointer" data-action="person" data-key="${k}">
+          <div class="adm-card-hdr">
+            <div class="p-av" style="background:${p.c};width:32px;height:32px;border-radius:7px;font-size:11px;flex-shrink:0">${p.init}</div>
+            <div class="adm-card-title">${p.name}<br><span style="font-size:10px;color:var(--mu);font-weight:400">${p.role}</span></div>
+            <span style="font-size:12px;font-weight:700;color:${p.c}">${done}/${tasks.length}</span>
+            ${chip}
+          </div>
+          <div class="adm-prog-bar"><div class="adm-prog-fill" style="width:${pct}%;background:${p.c}"></div></div>
+        </div>`;
+      }).join('');
+    body=`<div class="adm-section">${cards}</div>`;
+
+  } else {
+    // Users tab
+    const userRows=Object.entries(allRoles).map(([email,cfg])=>`
+      <div class="adm-user-row">
+        <div class="p-av" style="background:${cfg.personKey&&P[cfg.personKey]?P[cfg.personKey].c:'var(--mu)'};width:34px;height:34px;border-radius:7px;font-size:11px;flex-shrink:0">
+          ${cfg.personKey&&P[cfg.personKey]?P[cfg.personKey].init:cfg.name[0].toUpperCase()}
+        </div>
+        <div class="adm-user-info">
+          <div class="adm-user-name">${esc(cfg.name)}</div>
+          <div class="adm-user-email">${esc(email)}</div>
+        </div>
+        ${roleBadgeHTML(cfg.role)}
+        ${email!==cu.email?`<button class="adm-del-btn" data-action="admdeluser" data-email="${esc(email)}" title="Eliminar usuario">✕</button>`:''}
+      </div>`).join('');
+
+    const personOptions=Object.entries(P)
+      .map(([k,p])=>`<option value="${k}">${p.name}</option>`).join('');
+
+    const msg=admMsg?`<div class="adm-msg${admMsgErr?' log-err':''}">${esc(admMsg)}</div>`:'';
+
+    body=`<div class="adm-section">
+      <div class="adm-card">
+        <div class="adm-card-hdr"><div class="adm-card-title">Usuarios activos</div></div>
+        ${userRows||'<div style="padding:14px;font-size:12px;color:var(--mu)">No hay usuarios configurados</div>'}
+      </div>
+      <div class="adm-card">
+        <div class="adm-card-hdr"><div class="adm-card-title">Agregar usuario</div></div>
+        <div class="adm-form">
+          <div class="adm-warn">Primero crea la cuenta en Firebase Console (Authentication → Add user), luego agrégala aquí.</div>
+          <input class="adm-input" id="adm-email" type="email" placeholder="correo@ejemplo.com">
+          <input class="adm-input" id="adm-name"  type="text"  placeholder="Nombre completo">
+          <select class="adm-select" id="adm-role">
+            <option value="member">Miembro (puede marcar sus tareas)</option>
+            <option value="viewer">Solo lectura</option>
+            <option value="admin">Administrador</option>
+          </select>
+          <select class="adm-select" id="adm-person">
+            <option value="">-- Sin tareas asignadas --</option>
+            ${personOptions}
+          </select>
+          ${msg}
+          <button class="adm-add-btn" id="adm-add">Agregar usuario</button>
+        </div>
+      </div>
+    </div>`;
+  }
+
+  return `
+  ${appHeader({title:'Panel de Administración',sub:ucfg?ucfg.name:'',showAdmin:false})}
+  ${tabs}
+  ${body}`;
+}
+
+/* ─── NUEVA TAREA / EDITAR TAREA ─────────────────────────────────── */
+function renderNewTask(){
+  const ed=ntEditing?extraTasks[ntEditing]:null;
+  const target=ed?ed.personKey:(ntTarget||ucfg.personKey||Object.keys(P)[0]);
+  const isEdit=!!ed;
+
+  const personOpts=Object.entries(P).map(([k,pp])=>
+    `<option value="${k}"${k===target?' selected':''}>${esc(pp.name)} · ${esc(pp.role)}</option>`
+  ).join('');
+
+  const tipoOpts=TIPOS.map(t=>`<option value="${esc(t)}"></option>`).join('');
+
+  const vTipo   = ed?ed.tipo   :'';
+  const vDet    = ed?ed.detalle:'';
+  const vFecha  = ed?ed.fecha  :TODAY_ISO;
+  const vInicio = ed?ed.inicio :TODAY_ISO;
+  const vFin    = ed?ed.fin    :TODAY_ISO;
+  const vHoras  = ed&&ed.horas!=null?ed.horas:'';
+  const vDoc    = ed&&ed.doc?ed.doc:'';
+
+  const msg=ntMsg?`<div class="nt-msg${ntMsgErr?' err':''}">${esc(ntMsg)}</div>`:'';
+
+  const lock=canEditTasks()
+    ?''
+    :`<div class="nt-lock"><span>ℹ️</span><span>Puedes registrar tareas nuevas. Solo Cristian Bernal puede editarlas o eliminarlas después.</span></div>`;
+
+  return `
+  ${appHeader({
+    title:isEdit?'Editar tarea':'Nueva tarea',
+    sub:isEdit?'Solo administrador':`${MF[MONTH]} ${YEAR}`,
+    back:true, showAdmin:false})}
+  <div class="nt-wrap">
+    ${lock}
+    <div class="nt-card">
+
+      <div class="nt-field">
+        <label class="nt-label" for="nt-person">Responsable</label>
+        <select class="nt-sel" id="nt-person">${personOpts}</select>
+      </div>
+
+      <div class="nt-field">
+        <label class="nt-label" for="nt-tipo">Tipo de tarea</label>
+        <input class="nt-input" id="nt-tipo" type="text" list="nt-tipos"
+          placeholder="Ej: Causación invoice exterior" value="${esc(vTipo)}">
+        <datalist id="nt-tipos">${tipoOpts}</datalist>
+        <div class="nt-hint">Escribe libremente o elige una de las sugerencias.</div>
+      </div>
+
+      <div class="nt-field">
+        <label class="nt-label" for="nt-detalle">Detalle</label>
+        <textarea class="nt-area" id="nt-detalle"
+          placeholder="Describe qué debe hacerse, con qué soporte y qué se espera como resultado.">${esc(vDet)}</textarea>
+      </div>
+
+      <div class="nt-field">
+        <label class="nt-label" for="nt-fecha">Fecha de solicitud</label>
+        <input class="nt-input" id="nt-fecha" type="date" value="${esc(vFecha)}">
+        <div class="nt-hint">Cuándo llegó o se solicitó la tarea.</div>
+      </div>
+
+      <div class="nt-sec">Planeación</div>
+
+      <div class="nt-row">
+        <div class="nt-field">
+          <label class="nt-label" for="nt-inicio">Inicio estimado</label>
+          <input class="nt-input" id="nt-inicio" type="date" value="${esc(vInicio)}">
+        </div>
+        <div class="nt-field">
+          <label class="nt-label" for="nt-fin">Fin estimado</label>
+          <input class="nt-input" id="nt-fin" type="date" value="${esc(vFin)}">
+        </div>
+      </div>
+
+      <div class="nt-row">
+        <div class="nt-field">
+          <label class="nt-label" for="nt-horas">Tiempo estimado</label>
+          <input class="nt-input" id="nt-horas" type="number" min="0" step="0.5"
+            placeholder="Horas" value="${esc(vHoras)}">
+        </div>
+        <div class="nt-field">
+          <label class="nt-label" for="nt-doc">Documento <span class="nt-hint">(opcional)</span></label>
+          <input class="nt-input" id="nt-doc" type="text"
+            placeholder="FE, RC, DS…" maxlength="10" value="${esc(vDoc)}">
+        </div>
+      </div>
+
+      ${msg}
+      <button class="nt-save" id="nt-save">${isEdit?'Guardar cambios':'Registrar tarea'}</button>
+      <button class="nt-cancel" data-action="back">Cancelar</button>
+    </div>
+    <p class="nt-note">La tarea aparecerá en el tablero del responsable,<br>en el calendario y en el progreso del equipo.</p>
+  </div>`;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   RENDER PRINCIPAL
+═══════════════════════════════════════════════════════════════════ */
+function render(){
+  const app=document.getElementById('app');
+  let html='';
+  if(screen==='loading')   html=renderLoading();
+  else if(screen==='login') html=renderLogin();
+  else if(screen==='error') html=renderError();
+  else if(screen==='landing')    html=renderLanding();
+  else if(screen==='dashboard')  html=renderDashboard(curPerson);
+  else if(screen==='team')       html=renderTeam();
+  else if(screen==='calendar')   html=renderCalendar();
+  else if(screen==='year')       html=renderYear();
+  else if(screen==='admin')      html=renderAdmin();
+  else if(screen==='newtask')    html=renderNewTask();
+  else if(screen==='setup')      html=renderSetup();
+  app.innerHTML=html;
+  attachEvents();
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   EVENTOS
+═══════════════════════════════════════════════════════════════════ */
+/* Los listeners delegados van sobre #app, que NUNCA se destruye.
+   Por eso se registran una sola vez: si se registraran en cada render
+   se acumularían y un clic dispararía la acción varias veces
+   (marcar y desmarcar en el mismo clic). */
+let delegadosListos=false;
+
+function attachEvents(){
+  const app=document.getElementById('app');
+
+  /* ── Login y primera contraseña ── */
+  const logBtn=document.getElementById('log-submit');
+  const firstBtn=document.getElementById('log-first');
+  if(logBtn){
+    const campos=()=>({
+      email:(document.getElementById('log-email')||{}).value||'',
+      pass :(document.getElementById('log-pass') ||{}).value||'',
+      err  : document.getElementById('log-err'),
+    });
+    const mostrar=(el,msg)=>{el.textContent=msg;el.style.display='block';};
+    const reset=()=>{
+      logBtn.disabled=false;logBtn.textContent='Entrar';
+      if(firstBtn){firstBtn.disabled=false;firstBtn.textContent='Primera vez — crear mi contraseña';}
+    };
+
+    const doLog=async()=>{
+      const {email,pass,err}=campos();
+      logBtn.disabled=true;logBtn.textContent='Entrando…';
+      try{
+        await doLogin(email,pass);
+      } catch(e){
+        let msg='Correo o contraseña incorrectos.';
+        if(e.code==='auth/user-not-found')
+          msg = estaAutorizado(email)
+            ? 'Todavía no tienes contraseña. Usa el botón de abajo para crearla.'
+            : 'Este correo no está habilitado. Contacta al administrador.';
+        if(e.code==='auth/too-many-requests') msg='Demasiados intentos. Espera un momento.';
+        if(e.code==='auth/network-request-failed') msg='Sin conexión a internet.';
+        mostrar(err,msg);reset();
+      }
+    };
+
+    const doFirst=async()=>{
+      const {email,pass,err}=campos();
+      if(!email.trim()) return mostrar(err,'Escribe tu correo primero.');
+      if(pass.length<6)  return mostrar(err,'La contraseña debe tener al menos 6 caracteres.');
+      firstBtn.disabled=true;firstBtn.textContent='Creando…';
+      try{
+        await doRegister(email,pass);
+      } catch(e){
+        let msg='No se pudo crear la contraseña.';
+        if(e.code==='ies/no-autorizado')          msg='Este correo no está en la lista del equipo. Contacta al administrador.';
+        if(e.code==='auth/email-already-in-use')  msg='Ya tienes contraseña creada. Usa el botón Entrar.';
+        if(e.code==='auth/weak-password')         msg='La contraseña es muy débil. Usa 6 caracteres o más.';
+        if(e.code==='auth/invalid-email')         msg='El correo no tiene un formato válido.';
+        if(e.code==='auth/network-request-failed')msg='Sin conexión a internet.';
+        mostrar(err,msg);reset();
+      }
+    };
+
+    logBtn.addEventListener('click',doLog);
+    if(firstBtn) firstBtn.addEventListener('click',doFirst);
+    document.getElementById('log-pass').addEventListener('keydown',e=>{if(e.key==='Enter') doLog();});
+  }
+
+  /* ── Admin: add user ── */
+  const addBtn=document.getElementById('adm-add');
+  if(addBtn){
+    addBtn.addEventListener('click',async()=>{
+      const email=(document.getElementById('adm-email')||{}).value?.trim()||'';
+      const name =(document.getElementById('adm-name') ||{}).value?.trim()||'';
+      const role =(document.getElementById('adm-role') ||{}).value||'viewer';
+      const person=(document.getElementById('adm-person')||{}).value||null;
+      if(!email||!name){admMsg='Completa el correo y el nombre.';admMsgErr=true;render();return;}
+      addBtn.disabled=true;
+      const updated={...allRoles,[email]:{name,role,personKey:person||null}};
+      try{
+        await saveAllRoles(updated);
+        allRoles=updated;
+        admMsg=`${name} agregado correctamente.`;admMsgErr=false;
+      }catch(e){admMsg='Error al guardar. Revisa la conexión.';admMsgErr=true;}
+      render();
+    });
+  }
+
+  /* ── Nueva tarea / editar tarea ── */
+  const ntBtn=document.getElementById('nt-save');
+  if(ntBtn){
+    ntBtn.addEventListener('click',async()=>{
+      const val=id=>(document.getElementById(id)||{}).value||'';
+      const personKey=val('nt-person');
+      const tipo   =val('nt-tipo').trim();
+      const detalle=val('nt-detalle').trim();
+      const fecha  =val('nt-fecha');
+      const inicio =val('nt-inicio');
+      const fin    =val('nt-fin');
+      const horasRaw=val('nt-horas').trim();
+      const doc    =val('nt-doc').trim().toUpperCase();
+
+      const fail=m=>{ntMsg=m;ntMsgErr=true;render();};
+      if(!tipo)          return fail('Escribe el tipo de tarea.');
+      if(!detalle)       return fail('Agrega el detalle de la tarea.');
+      if(!inicio||!fin)  return fail('Indica el inicio y el fin estimados.');
+      if(fin<inicio)     return fail('El fin estimado no puede ser anterior al inicio.');
+
+      const ym=inicio.slice(0,7);
+      const from=parseInt(inicio.slice(8,10),10);
+      const lastDay=new Date(+inicio.slice(0,4),+inicio.slice(5,7),0).getDate();
+      const to=(fin.slice(0,7)===ym)?parseInt(fin.slice(8,10),10):lastDay;
+      const horas=horasRaw===''?null:Number(horasRaw);
+
+      const payload={personKey,tipo,detalle,fecha:fecha||TODAY_ISO,
+                     inicio,fin,horas,doc,ym,from,to};
+
+      ntBtn.disabled=true;
+      ntBtn.textContent=ntEditing?'Guardando…':'Registrando…';
+      try{
+        if(ntEditing) await updateExtra(ntEditing,payload);
+        else          await createExtra(payload);
+        ntEditing=null;ntTarget=null;ntMsg='';ntMsgErr=false;
+        curPerson=personKey;screen='dashboard';expanded.clear();
+        render();
+      }catch(err){
+        console.error(err);
+        ntMsg='No se pudo guardar. Revisa la conexión e intenta de nuevo.';
+        ntMsgErr=true;render();
+      }
+    });
+  }
+
+  /* ── Configuración inicial ── */
+  const setupBtn=document.getElementById('setup-go');
+  if(setupBtn){
+    setupBtn.addEventListener('click',async()=>{
+      setupBtn.disabled=true;setupBtn.textContent='Creando…';
+      try{
+        await seedRoles();
+        setupMsg='';setupErr=false;
+        await bootUser(cu);          // vuelve a cargar con la config ya creada
+      }catch(err){
+        console.error(err);
+        setupErr=true;
+        setupMsg = err && err.code==='permission-denied'
+          ? 'Firestore rechazó la escritura. Revisa que las reglas de seguridad estén publicadas y que el correo del administrador coincida.'
+          : 'No se pudo crear la configuración. Revisa la conexión e intenta de nuevo.';
+        render();
+      }
+    });
+  }
+
+  /* ── Delegados: solo la primera vez ── */
+  if(delegadosListos) return;
+  delegadosListos=true;
+
+  /* ── Clicks delegados ── */
+  app.addEventListener('click',async e=>{
+    const expBtn=e.target.closest('[data-action="expand"]');
+    if(expBtn){
+      const id=expBtn.dataset.tid;
+      const det=document.getElementById('det-'+id);
+      if(!det) return;
+      const open=det.classList.toggle('open');
+      expBtn.textContent=open?'▲':'▼';
+      open?expanded.add(id):expanded.delete(id);
+      return;
+    }
+
+    const btn=e.target.closest('[data-action]');
+    if(!btn) return;
+    const {action,key,tab,m,day,mi,email,xid}=btn.dataset;
+
+    if(action==='logout'){await doLogout();screen='login';render();return;}
+    if(action==='back'){
+      if(screen==='newtask'){
+        const back=ntEditing?extraTasks[ntEditing]?.personKey:ntTarget;
+        ntEditing=null;ntTarget=null;ntMsg='';ntMsgErr=false;
+        if(back){curPerson=back;screen='dashboard';} else screen='landing';
+      } else screen='landing';
+      render();return;
+    }
+    if(action==='person')    {curPerson=key;screen='dashboard';expanded.clear();render();return;}
+    if(action==='team')      {screen='team';render();return;}
+    if(action==='calendar')  {screen='calendar';viewMonth=MONTH;calDay=DAY;render();return;}
+    if(action==='calmonth')  {viewMonth=parseInt(m,10);calDay=viewMonth===MONTH?DAY:1;render();return;}
+    if(action==='calday')    {calDay=parseInt(day,10);render();return;}
+    if(action==='year')      {screen='year';render();return;}
+    if(action==='yearmonth') {viewMonth=parseInt(mi,10);calDay=viewMonth===MONTH?DAY:1;screen='calendar';render();return;}
+    if(action==='admin')     {adminTab='progress';admMsg='';screen='admin';render();return;}
+    if(action==='admtab')    {adminTab=tab;admMsg='';render();return;}
+    if(action==='export')    {doExport(key||curPerson);return;}
+    if(action==='revert')    {await toggleTask(btn.dataset.tid);return;}
+    if(action==='newtask'){
+      if(!canCreate()) return;
+      ntEditing=null;ntTarget=key||curPerson||ucfg.personKey||null;
+      ntMsg='';ntMsgErr=false;screen='newtask';render();return;
+    }
+    if(action==='xedit'){
+      if(!canEditTasks()) return;
+      ntEditing=xid;ntTarget=null;ntMsg='';ntMsgErr=false;
+      screen='newtask';render();return;
+    }
+    if(action==='xdel'){
+      if(!canEditTasks()) return;
+      const t=extraTasks[xid];
+      if(!confirm(`¿Eliminar la tarea "${t?t.tipo:''}"?\n\nEsta acción no se puede deshacer.`)) return;
+      try{ await deleteExtra(xid); }
+      catch(err){ console.error(err); alert('No se pudo eliminar. Revisa la conexión.'); }
+      return;
+    }
+    if(action==='admdeluser'){
+      if(!confirm(`¿Eliminar el acceso de ${email}?`)) return;
+      const updated={...allRoles};delete updated[email];
+      await saveAllRoles(updated);
+      render();
+    }
+  });
+
+  /* ── Checkboxes ── */
+  app.addEventListener('change',async e=>{
+    const cb=e.target.closest('input[type=checkbox][data-tid]');
+    if(!cb||cb.disabled) return;
+    await toggleTask(cb.dataset.tid);
+  });
+}
+
+/* ─── EXPORTAR ──────────────────────────────────────────────────── */
+async function doExport(key){
+  const p=P[key],tasks=tasksFor(key);
+  const done=tasks.filter(t=>prog[t.id]).length;
+  const lines=[
+    `IES — Estado de Progreso`,`${'─'.repeat(40)}`,
+    `${p.name} · ${p.role}`,
+    `${DE[NOW.getDay()]}, ${DAY} de ${MF[MONTH]} ${YEAR}`,
+    `Progreso: ${done} / ${tasks.length} tareas (${tasks.length?Math.round(done/tasks.length*100):0}%)`,
+    ``,`TAREAS DEL MES:`,
+    ...tasks.map(t=>{
+      const st=getStatus(t);
+      const m={done:'[✓]',active:'[●]',overdue:'[!]',upcoming:'[◷]',future:'[ ]'}[st];
+      const x=t.extra?' (adicional'+(t.horas?` · ≈${t.horas}h`:'')+')':'';
+      return `${m}  Días ${String(t.from).padStart(2,'0')}–${String(t.to).padEnd(2,' ')}  ${t.name}${x}`;
+    }),
+    ``,`Generado el ${NOW.toLocaleString('es-CO')}`,
+  ];
+  const txt=lines.join('\n');
+  try{
+    await navigator.clipboard.writeText(txt);
+    const btn=document.querySelector('[data-action="export"]');
+    if(btn){const o=btn.innerHTML;btn.innerHTML='✓ Copiado';setTimeout(()=>btn.innerHTML=o,2400);}
+  }catch{}
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   INICIALIZACIÓN — escucha cambios de autenticación
+═══════════════════════════════════════════════════════════════════ */
+render(); // muestra loading
+
+async function bootUser(user){
+  try{
+    screen='loading';render();
+    const res=await loadUserConfig(user.email);
+
+    // Primera vez: todavía no existe config/roles
+    if(!res.exists){ screen='setup'; render(); return; }
+
+    // Existe la configuración pero este usuario no está habilitado
+    if(!res.cfg){ screen='error'; render(); return; }
+
+    ucfg=res.cfg;
+    if(ucfg.role==='admin') allRoles=await loadAllRoles();
+    subscribeProgress();
+    subscribeExtras();
+    screen=ucfg.role==='viewer'?'team':'landing';
+    render();
+  }catch(err){
+    console.error(err);
+    screen='error';render();
+  }
+}
+
+auth.onAuthStateChanged(async user=>{
+  cu=user;
+  if(!user){
+    ucfg=null;allRoles={};prog={};extraTasks={};
+    setupMsg='';setupErr=false;
+    if(unsubProg){unsubProg();unsubProg=null;}
+    if(unsubExtra){unsubExtra();unsubExtra=null;}
+    screen='login';render();
+    return;
+  }
+  await bootUser(user);
+});
+</script>
+</body>
+</html>
