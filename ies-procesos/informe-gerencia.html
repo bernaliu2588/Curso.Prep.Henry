@@ -139,6 +139,35 @@ tbody tr:hover{background:var(--surface-2)}
   padding:13px 15px;background:var(--surface-2);border-radius:8px;max-width:74ch}
 .ft{margin-top:52px;padding-top:18px;border-top:1px solid var(--rule);
   font-size:11px;color:var(--text-muted);line-height:1.7}
+
+/* saturacion */
+.sats{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-top:4px}
+.sat{background:var(--surface-3);border:1px solid var(--rule);border-radius:10px;padding:15px;text-align:center}
+.sat-n{font-size:12px;font-weight:700;margin-bottom:10px;line-height:1.25}
+.sat-k{font-size:38px;font-weight:800;letter-spacing:-1.5px;line-height:1}
+.sat-k.crit{color:var(--crit)} .sat-k.warn{color:#8a5d00} .sat-k.ok{color:var(--good)}
+@media (prefers-color-scheme:dark){:root:where(:not([data-theme="light"])) .sat-k.warn{color:var(--warn)}}
+:root[data-theme="dark"] .sat-k.warn{color:var(--warn)}
+.sat-l{font-size:10px;color:var(--text-muted);margin-top:6px;line-height:1.4}
+.sat-b{font-size:11px;color:var(--text-secondary);margin-top:11px;padding-top:9px;
+  border-top:1px solid var(--rule);line-height:1.45}
+.sat-b b{color:var(--text-primary)}
+.sm{margin-top:20px}
+.sm-t{font-size:13px;font-weight:700;margin-bottom:8px}
+.sm-t span{font-weight:600;color:var(--text-muted);font-size:11px;margin-left:6px}
+.sm-g{display:flex;gap:5px;align-items:flex-end;height:104px}
+.sm-c{flex:1;display:flex;flex-direction:column;justify-content:flex-end;height:100%;align-items:center}
+.sm-b{width:100%;border-radius:3px 3px 0 0;background:var(--good);min-height:3px}
+.sm-b.warn{background:var(--warn)} .sm-b.crit{background:var(--crit)}
+.sm-v{font-size:10px;font-weight:700;margin-top:5px;color:var(--text-secondary)}
+.sm-x{display:flex;gap:5px;margin-top:2px}
+.sm-x span{flex:1;text-align:center;font-size:9px;color:var(--text-muted)}
+.big{background:color-mix(in srgb,var(--crit) 8%,transparent);
+  border:1px solid color-mix(in srgb,var(--crit) 30%,transparent);
+  border-left:4px solid var(--crit);border-radius:9px;padding:16px 18px;margin-top:20px}
+.big-t{font-size:11px;font-weight:800;letter-spacing:1.1px;text-transform:uppercase;color:var(--crit)}
+.big-d{font-size:14px;color:var(--text-primary);line-height:1.65;margin-top:9px}
+.big-d b{font-weight:800}
 .scroll{overflow-x:auto}
 </style>
 
@@ -164,7 +193,7 @@ tbody tr:hover{background:var(--surface-2)}
         <div><div class="k">72</div><div class="kl">tareas al año</div></div>
         <div><div class="k">1196</div><div class="kl">días-tarea</div></div>
         <div><div class="k">100%</div><div class="kl">ocupación</div></div>
-        <div><div class="k">3.28</div><div class="kl">tareas/día</div></div>
+        <div><div class="k">3.28</div><div class="kl">tareas/día<br>calendario</div></div>
       </div>
       <div class="pill warn"><span>●</span>Pico de 5 tareas simultáneas · Atención</div>
     </div><div class="card">
@@ -174,7 +203,7 @@ tbody tr:hover{background:var(--surface-2)}
         <div><div class="k">120</div><div class="kl">tareas al año</div></div>
         <div><div class="k">1003</div><div class="kl">días-tarea</div></div>
         <div><div class="k">100%</div><div class="kl">ocupación</div></div>
-        <div><div class="k">2.75</div><div class="kl">tareas/día</div></div>
+        <div><div class="k">2.75</div><div class="kl">tareas/día<br>calendario</div></div>
       </div>
       <div class="pill warn"><span>●</span>Pico de 4 tareas simultáneas · Atención</div>
     </div><div class="card">
@@ -184,7 +213,7 @@ tbody tr:hover{background:var(--surface-2)}
         <div><div class="k">174</div><div class="kl">tareas al año</div></div>
         <div><div class="k">719</div><div class="kl">días-tarea</div></div>
         <div><div class="k">100%</div><div class="kl">ocupación</div></div>
-        <div><div class="k">1.97</div><div class="kl">tareas/día</div></div>
+        <div><div class="k">1.97</div><div class="kl">tareas/día<br>calendario</div></div>
       </div>
       <div class="pill crit"><span>▲</span>Pico de 7 tareas simultáneas · Crítico</div>
     </div><div class="card">
@@ -194,7 +223,7 @@ tbody tr:hover{background:var(--surface-2)}
         <div><div class="k">24</div><div class="kl">tareas al año</div></div>
         <div><div class="k">401</div><div class="kl">días-tarea</div></div>
         <div><div class="k">100%</div><div class="kl">ocupación</div></div>
-        <div><div class="k">1.10</div><div class="kl">tareas/día</div></div>
+        <div><div class="k">1.10</div><div class="kl">tareas/día<br>calendario</div></div>
       </div>
       <div class="pill ok"><span>✓</span>Pico de 2 tareas simultáneas · Holgado</div>
     </div><div class="card">
@@ -204,14 +233,56 @@ tbody tr:hover{background:var(--surface-2)}
         <div><div class="k">60</div><div class="kl">tareas al año</div></div>
         <div><div class="k">269</div><div class="kl">días-tarea</div></div>
         <div><div class="k">57%</div><div class="kl">ocupación</div></div>
-        <div><div class="k">0.74</div><div class="kl">tareas/día</div></div>
+        <div><div class="k">0.74</div><div class="kl">tareas/día<br>calendario</div></div>
       </div>
       <div class="pill ok"><span>✓</span>Pico de 2 tareas simultáneas · Holgado</div>
     </div></div>
 </section>
 
+
 <section class="sec">
-  <div class="sec-h"><span class="sec-n">02</span><h2 class="sec-t">Carga mes a mes</h2></div>
+  <div class="sec-h"><span class="sec-n">02</span><h2 class="sec-t">Nivel de saturación</h2></div>
+  <p class="sec-d">El año tiene <strong>261 días hábiles</strong> de lunes a viernes, sin descontar festivos.
+     Esta medida divide los días-tarea entre esos días hábiles: indica cuántos frentes distintos
+     mantiene abiertos cada posición, en promedio, por cada día laborable.</p>
+  <div class="sats"><div class="sat"><div class="sat-n">Isnardi Sanches</div>
+      <div class="sat-k crit">4.58</div>
+      <div class="sat-l">frentes abiertos<br>por día hábil</div>
+      <div class="sat-b"><b>365</b> de 365 días con 3 o más frentes</div></div><div class="sat"><div class="sat-n">Luis Amador</div>
+      <div class="sat-k crit">3.84</div>
+      <div class="sat-l">frentes abiertos<br>por día hábil</div>
+      <div class="sat-b"><b>202</b> de 365 días con 3 o más frentes</div></div><div class="sat"><div class="sat-n">Cristian Bernal</div>
+      <div class="sat-k warn">2.75</div>
+      <div class="sat-l">frentes abiertos<br>por día hábil</div>
+      <div class="sat-b"><b>72</b> de 365 días con 3 o más frentes</div></div><div class="sat"><div class="sat-n">Beatriz</div>
+      <div class="sat-k ok">1.54</div>
+      <div class="sat-l">frentes abiertos<br>por día hábil</div>
+      <div class="sat-b"><b>0</b> de 365 días con 3 o más frentes</div></div><div class="sat"><div class="sat-n">Edgar Metaute</div>
+      <div class="sat-k ok">1.03</div>
+      <div class="sat-l">frentes abiertos<br>por día hábil</div>
+      <div class="sat-b"><b>0</b> de 365 días con 3 o más frentes</div></div></div>
+  <div class="big">
+    <div class="big-t">El dato que resume la situación</div>
+    <div class="big-d">Tesorería tiene <b>tres o más frentes abiertos simultáneamente los 365 días del año</b>,
+      incluidos los 104 días de fin de semana. No existe un solo día del calendario en que opere con menos
+      de tres asuntos a la vez. El Auxiliar Contable está en esa condición 202 días al año, y Contaduría
+      72 días — de los cuales 48 con cuatro o más frentes.</div>
+  </div>
+</section>
+
+<section class="sec">
+  <div class="sec-h"><span class="sec-n">03</span><h2 class="sec-t">La saturación no baja ningún mes</h2></div>
+  <p class="sec-d">Frentes abiertos por día hábil, mes a mes, en las tres posiciones centrales.
+     No hay temporada baja: la diferencia entre el mes más cargado y el más liviano no llega al 12%.
+     Verde por debajo de 2,5 · ámbar entre 2,5 y 3,5 · rojo desde 3,5.</p>
+  <div class="sm"><div class="sm-t">Isnardi Sanches <span>4.58 al año</span></div><div class="sm-g"><div class="sm-c"><div class="sm-b crit" style="height:92.8%" title="Ene: 4.64 frentes por día hábil"></div><div class="sm-v">4.6</div></div><div class="sm-c"><div class="sm-b crit" style="height:90.0%" title="Feb: 4.50 frentes por día hábil"></div><div class="sm-v">4.5</div></div><div class="sm-c"><div class="sm-b crit" style="height:92.8%" title="Mar: 4.64 frentes por día hábil"></div><div class="sm-v">4.6</div></div><div class="sm-c"><div class="sm-b crit" style="height:89.0%" title="Abr: 4.45 frentes por día hábil"></div><div class="sm-v">4.5</div></div><div class="sm-c"><div class="sm-b crit" style="height:97.2%" title="May: 4.86 frentes por día hábil"></div><div class="sm-v">4.9</div></div><div class="sm-c"><div class="sm-b crit" style="height:89.0%" title="Jun: 4.45 frentes por día hábil"></div><div class="sm-v">4.5</div></div><div class="sm-c"><div class="sm-b crit" style="height:88.6%" title="Jul: 4.43 frentes por día hábil"></div><div class="sm-v">4.4</div></div><div class="sm-c"><div class="sm-b crit" style="height:97.2%" title="Ago: 4.86 frentes por día hábil"></div><div class="sm-v">4.9</div></div><div class="sm-c"><div class="sm-b crit" style="height:89.0%" title="Sep: 4.45 frentes por día hábil"></div><div class="sm-v">4.5</div></div><div class="sm-c"><div class="sm-b crit" style="height:92.8%" title="Oct: 4.64 frentes por día hábil"></div><div class="sm-v">4.6</div></div><div class="sm-c"><div class="sm-b crit" style="height:93.4%" title="Nov: 4.67 frentes por día hábil"></div><div class="sm-v">4.7</div></div><div class="sm-c"><div class="sm-b crit" style="height:88.6%" title="Dic: 4.43 frentes por día hábil"></div><div class="sm-v">4.4</div></div></div><div class="sm-x"><span>Ene</span><span>Feb</span><span>Mar</span><span>Abr</span><span>May</span><span>Jun</span><span>Jul</span><span>Ago</span><span>Sep</span><span>Oct</span><span>Nov</span><span>Dic</span></div></div><div class="sm"><div class="sm-t">Luis Amador <span>3.84 al año</span></div><div class="sm-g"><div class="sm-c"><div class="sm-b crit" style="height:77.2%" title="Ene: 3.86 frentes por día hábil"></div><div class="sm-v">3.9</div></div><div class="sm-c"><div class="sm-b crit" style="height:76.0%" title="Feb: 3.80 frentes por día hábil"></div><div class="sm-v">3.8</div></div><div class="sm-c"><div class="sm-b crit" style="height:77.2%" title="Mar: 3.86 frentes por día hábil"></div><div class="sm-v">3.9</div></div><div class="sm-c"><div class="sm-b crit" style="height:75.4%" title="Abr: 3.77 frentes por día hábil"></div><div class="sm-v">3.8</div></div><div class="sm-c"><div class="sm-b crit" style="height:81.0%" title="May: 4.05 frentes por día hábil"></div><div class="sm-v">4.0</div></div><div class="sm-c"><div class="sm-b crit" style="height:75.4%" title="Jun: 3.77 frentes por día hábil"></div><div class="sm-v">3.8</div></div><div class="sm-c"><div class="sm-b crit" style="height:74.0%" title="Jul: 3.70 frentes por día hábil"></div><div class="sm-v">3.7</div></div><div class="sm-c"><div class="sm-b crit" style="height:81.0%" title="Ago: 4.05 frentes por día hábil"></div><div class="sm-v">4.0</div></div><div class="sm-c"><div class="sm-b crit" style="height:75.4%" title="Sep: 3.77 frentes por día hábil"></div><div class="sm-v">3.8</div></div><div class="sm-c"><div class="sm-b crit" style="height:77.2%" title="Oct: 3.86 frentes por día hábil"></div><div class="sm-v">3.9</div></div><div class="sm-c"><div class="sm-b crit" style="height:79.0%" title="Nov: 3.95 frentes por día hábil"></div><div class="sm-v">4.0</div></div><div class="sm-c"><div class="sm-b crit" style="height:74.0%" title="Dic: 3.70 frentes por día hábil"></div><div class="sm-v">3.7</div></div></div><div class="sm-x"><span>Ene</span><span>Feb</span><span>Mar</span><span>Abr</span><span>May</span><span>Jun</span><span>Jul</span><span>Ago</span><span>Sep</span><span>Oct</span><span>Nov</span><span>Dic</span></div></div><div class="sm"><div class="sm-t">Cristian Bernal <span>2.75 al año</span></div><div class="sm-g"><div class="sm-c"><div class="sm-b warn" style="height:58.2%" title="Ene: 2.91 frentes por día hábil"></div><div class="sm-v">2.9</div></div><div class="sm-c"><div class="sm-b warn" style="height:54.0%" title="Feb: 2.70 frentes por día hábil"></div><div class="sm-v">2.7</div></div><div class="sm-c"><div class="sm-b warn" style="height:58.2%" title="Mar: 2.91 frentes por día hábil"></div><div class="sm-v">2.9</div></div><div class="sm-c"><div class="sm-b warn" style="height:51.0%" title="Abr: 2.55 frentes por día hábil"></div><div class="sm-v">2.5</div></div><div class="sm-c"><div class="sm-b warn" style="height:61.0%" title="May: 3.05 frentes por día hábil"></div><div class="sm-v">3.0</div></div><div class="sm-c"><div class="sm-b warn" style="height:51.0%" title="Jun: 2.55 frentes por día hábil"></div><div class="sm-v">2.5</div></div><div class="sm-c"><div class="sm-b warn" style="height:55.6%" title="Jul: 2.78 frentes por día hábil"></div><div class="sm-v">2.8</div></div><div class="sm-c"><div class="sm-b warn" style="height:54.2%" title="Ago: 2.71 frentes por día hábil"></div><div class="sm-v">2.7</div></div><div class="sm-c"><div class="sm-b warn" style="height:57.2%" title="Sep: 2.86 frentes por día hábil"></div><div class="sm-v">2.9</div></div><div class="sm-c"><div class="sm-b warn" style="height:51.8%" title="Oct: 2.59 frentes por día hábil"></div><div class="sm-v">2.6</div></div><div class="sm-c"><div class="sm-b warn" style="height:60.0%" title="Nov: 3.00 frentes por día hábil"></div><div class="sm-v">3.0</div></div><div class="sm-c"><div class="sm-b ok" style="height:49.6%" title="Dic: 2.48 frentes por día hábil"></div><div class="sm-v">2.5</div></div></div><div class="sm-x"><span>Ene</span><span>Feb</span><span>Mar</span><span>Abr</span><span>May</span><span>Jun</span><span>Jul</span><span>Ago</span><span>Sep</span><span>Oct</span><span>Nov</span><span>Dic</span></div></div>
+  <div class="nota">Esta cifra mide <strong>simultaneidad</strong>: cuántos asuntos distintos permanecen
+    abiertos a la vez, con su costo de atención y de cambio de contexto. No mide horas trabajadas.
+    Para cuantificar horas se requiere registro de tiempos, que la aplicación ya permite capturar.</div>
+</section>
+
+<section class="sec">
+  <div class="sec-h"><span class="sec-n">04</span><h2 class="sec-t">Carga mes a mes</h2></div>
   <p class="sec-d">Días-tarea del equipo por mes. Los meses de 28 y 30 días bajan de forma natural;
      enero, marzo, mayo, julio, septiembre y noviembre suben por la declaración bimestral de IVA.</p>
   <div class="leg"><div class="leg-i"><span class="leg-d" style="background:var(--s1)"></span>Isnardi Sanches</div><div class="leg-i"><span class="leg-d" style="background:var(--s2)"></span>Luis Amador</div><div class="leg-i"><span class="leg-d" style="background:var(--s3)"></span>Cristian Bernal</div><div class="leg-i"><span class="leg-d" style="background:var(--s4)"></span>Beatriz</div><div class="leg-i"><span class="leg-d" style="background:var(--s5)"></span>Edgar Metaute</div></div>
@@ -219,7 +290,7 @@ tbody tr:hover{background:var(--surface-2)}
 </section>
 
 <section class="sec">
-  <div class="sec-h"><span class="sec-n">03</span><h2 class="sec-t">Distribución por persona y mes</h2></div>
+  <div class="sec-h"><span class="sec-n">05</span><h2 class="sec-t">Distribución por persona y mes</h2></div>
   <p class="sec-d">Cada celda muestra los días-tarea de esa persona en ese mes. El tono se
      intensifica con la carga.</p>
   <div class="scroll"><div class="heat"><div class="hm-lbl"></div><div class="hm-h">Ene</div><div class="hm-h">Feb</div><div class="hm-h">Mar</div><div class="hm-h">Abr</div><div class="hm-h">May</div><div class="hm-h">Jun</div><div class="hm-h">Jul</div><div class="hm-h">Ago</div><div class="hm-h">Sep</div><div class="hm-h">Oct</div><div class="hm-h">Nov</div><div class="hm-h">Dic</div><div class="hm-n">Isnardi</div><div class="hm-c" style="background:#184f95;color:#ffffff" title="Isnardi Sanches · Ene: 102 días-tarea">102</div><div class="hm-c" style="background:#184f95;color:#ffffff" title="Isnardi Sanches · Feb: 90 días-tarea">90</div><div class="hm-c" style="background:#184f95;color:#ffffff" title="Isnardi Sanches · Mar: 102 días-tarea">102</div><div class="hm-c" style="background:#184f95;color:#ffffff" title="Isnardi Sanches · Abr: 98 días-tarea">98</div><div class="hm-c" style="background:#184f95;color:#ffffff" title="Isnardi Sanches · May: 102 días-tarea">102</div><div class="hm-c" style="background:#184f95;color:#ffffff" title="Isnardi Sanches · Jun: 98 días-tarea">98</div><div class="hm-c" style="background:#184f95;color:#ffffff" title="Isnardi Sanches · Jul: 102 días-tarea">102</div><div class="hm-c" style="background:#184f95;color:#ffffff" title="Isnardi Sanches · Ago: 102 días-tarea">102</div><div class="hm-c" style="background:#184f95;color:#ffffff" title="Isnardi Sanches · Sep: 98 días-tarea">98</div><div class="hm-c" style="background:#184f95;color:#ffffff" title="Isnardi Sanches · Oct: 102 días-tarea">102</div><div class="hm-c" style="background:#184f95;color:#ffffff" title="Isnardi Sanches · Nov: 98 días-tarea">98</div><div class="hm-c" style="background:#184f95;color:#ffffff" title="Isnardi Sanches · Dic: 102 días-tarea">102</div><div class="hm-n">Luis</div><div class="hm-c" style="background:#256abf;color:#ffffff" title="Luis Amador · Ene: 85 días-tarea">85</div><div class="hm-c" style="background:#256abf;color:#ffffff" title="Luis Amador · Feb: 76 días-tarea">76</div><div class="hm-c" style="background:#256abf;color:#ffffff" title="Luis Amador · Mar: 85 días-tarea">85</div><div class="hm-c" style="background:#256abf;color:#ffffff" title="Luis Amador · Abr: 83 días-tarea">83</div><div class="hm-c" style="background:#256abf;color:#ffffff" title="Luis Amador · May: 85 días-tarea">85</div><div class="hm-c" style="background:#256abf;color:#ffffff" title="Luis Amador · Jun: 83 días-tarea">83</div><div class="hm-c" style="background:#256abf;color:#ffffff" title="Luis Amador · Jul: 85 días-tarea">85</div><div class="hm-c" style="background:#256abf;color:#ffffff" title="Luis Amador · Ago: 85 días-tarea">85</div><div class="hm-c" style="background:#256abf;color:#ffffff" title="Luis Amador · Sep: 83 días-tarea">83</div><div class="hm-c" style="background:#256abf;color:#ffffff" title="Luis Amador · Oct: 85 días-tarea">85</div><div class="hm-c" style="background:#256abf;color:#ffffff" title="Luis Amador · Nov: 83 días-tarea">83</div><div class="hm-c" style="background:#256abf;color:#ffffff" title="Luis Amador · Dic: 85 días-tarea">85</div><div class="hm-n">Cristian</div><div class="hm-c" style="background:#2a78d6;color:#ffffff" title="Cristian Bernal · Ene: 64 días-tarea">64</div><div class="hm-c" style="background:#3987e5;color:#ffffff" title="Cristian Bernal · Feb: 54 días-tarea">54</div><div class="hm-c" style="background:#2a78d6;color:#ffffff" title="Cristian Bernal · Mar: 64 días-tarea">64</div><div class="hm-c" style="background:#3987e5;color:#ffffff" title="Cristian Bernal · Abr: 56 días-tarea">56</div><div class="hm-c" style="background:#2a78d6;color:#ffffff" title="Cristian Bernal · May: 64 días-tarea">64</div><div class="hm-c" style="background:#3987e5;color:#ffffff" title="Cristian Bernal · Jun: 56 días-tarea">56</div><div class="hm-c" style="background:#2a78d6;color:#ffffff" title="Cristian Bernal · Jul: 64 días-tarea">64</div><div class="hm-c" style="background:#3987e5;color:#ffffff" title="Cristian Bernal · Ago: 57 días-tarea">57</div><div class="hm-c" style="background:#2a78d6;color:#ffffff" title="Cristian Bernal · Sep: 63 días-tarea">63</div><div class="hm-c" style="background:#3987e5;color:#ffffff" title="Cristian Bernal · Oct: 57 días-tarea">57</div><div class="hm-c" style="background:#2a78d6;color:#ffffff" title="Cristian Bernal · Nov: 63 días-tarea">63</div><div class="hm-c" style="background:#3987e5;color:#ffffff" title="Cristian Bernal · Dic: 57 días-tarea">57</div><div class="hm-n">Beatriz</div><div class="hm-c" style="background:#6da7ec;color:#0d366b" title="Beatriz · Ene: 34 días-tarea">34</div><div class="hm-c" style="background:#6da7ec;color:#0d366b" title="Beatriz · Feb: 31 días-tarea">31</div><div class="hm-c" style="background:#6da7ec;color:#0d366b" title="Beatriz · Mar: 34 días-tarea">34</div><div class="hm-c" style="background:#6da7ec;color:#0d366b" title="Beatriz · Abr: 33 días-tarea">33</div><div class="hm-c" style="background:#6da7ec;color:#0d366b" title="Beatriz · May: 34 días-tarea">34</div><div class="hm-c" style="background:#6da7ec;color:#0d366b" title="Beatriz · Jun: 33 días-tarea">33</div><div class="hm-c" style="background:#6da7ec;color:#0d366b" title="Beatriz · Jul: 34 días-tarea">34</div><div class="hm-c" style="background:#6da7ec;color:#0d366b" title="Beatriz · Ago: 34 días-tarea">34</div><div class="hm-c" style="background:#6da7ec;color:#0d366b" title="Beatriz · Sep: 33 días-tarea">33</div><div class="hm-c" style="background:#6da7ec;color:#0d366b" title="Beatriz · Oct: 34 días-tarea">34</div><div class="hm-c" style="background:#6da7ec;color:#0d366b" title="Beatriz · Nov: 33 días-tarea">33</div><div class="hm-c" style="background:#6da7ec;color:#0d366b" title="Beatriz · Dic: 34 días-tarea">34</div><div class="hm-n">Edgar</div><div class="hm-c" style="background:#9ec5f4;color:#0d366b" title="Edgar Metaute · Ene: 23 días-tarea">23</div><div class="hm-c" style="background:#9ec5f4;color:#0d366b" title="Edgar Metaute · Feb: 20 días-tarea">20</div><div class="hm-c" style="background:#9ec5f4;color:#0d366b" title="Edgar Metaute · Mar: 23 días-tarea">23</div><div class="hm-c" style="background:#9ec5f4;color:#0d366b" title="Edgar Metaute · Abr: 22 días-tarea">22</div><div class="hm-c" style="background:#9ec5f4;color:#0d366b" title="Edgar Metaute · May: 23 días-tarea">23</div><div class="hm-c" style="background:#9ec5f4;color:#0d366b" title="Edgar Metaute · Jun: 22 días-tarea">22</div><div class="hm-c" style="background:#9ec5f4;color:#0d366b" title="Edgar Metaute · Jul: 23 días-tarea">23</div><div class="hm-c" style="background:#9ec5f4;color:#0d366b" title="Edgar Metaute · Ago: 23 días-tarea">23</div><div class="hm-c" style="background:#9ec5f4;color:#0d366b" title="Edgar Metaute · Sep: 22 días-tarea">22</div><div class="hm-c" style="background:#9ec5f4;color:#0d366b" title="Edgar Metaute · Oct: 23 días-tarea">23</div><div class="hm-c" style="background:#9ec5f4;color:#0d366b" title="Edgar Metaute · Nov: 22 días-tarea">22</div><div class="hm-c" style="background:#9ec5f4;color:#0d366b" title="Edgar Metaute · Dic: 23 días-tarea">23</div></div></div>
@@ -235,7 +306,7 @@ tbody tr:hover{background:var(--surface-2)}
 </section>
 
 <section class="sec">
-  <div class="sec-h"><span class="sec-n">04</span><h2 class="sec-t">Concentración dentro del mes</h2></div>
+  <div class="sec-h"><span class="sec-n">06</span><h2 class="sec-t">Concentración dentro del mes</h2></div>
   <p class="sec-d">Tareas del equipo abiertas cada día. La franja del 10 al 13 concentra el cierre
      contable, los cinco insumos del informe y las dos sesiones de revisión.
      Es el tramo donde un retraso se propaga al resto del ciclo.</p>
@@ -253,7 +324,7 @@ tbody tr:hover{background:var(--surface-2)}
 </section>
 
 <section class="sec">
-  <div class="sec-h"><span class="sec-n">05</span><h2 class="sec-t">Hitos con fecha comprometida</h2></div>
+  <div class="sec-h"><span class="sec-n">07</span><h2 class="sec-t">Hitos con fecha comprometida</h2></div>
   <p class="sec-d">Compromisos del ciclo ordenados por fecha. <strong>Legal</strong> tiene vencimiento
      de ley. <strong>Alta</strong> significa que un retraso frena a otra persona.
      <strong>Media</strong> afecta solo al proceso propio.</p>
@@ -264,7 +335,7 @@ tbody tr:hover{background:var(--surface-2)}
 </section>
 
 <section class="sec">
-  <div class="sec-h"><span class="sec-n">06</span><h2 class="sec-t">Hallazgos</h2></div>
+  <div class="sec-h"><span class="sec-n">08</span><h2 class="sec-t">Hallazgos</h2></div>
   <div class="find">
     <div class="f crit"><div class="f-t">Concentración</div>
       <div class="f-d">El 30% de la carga del mes cae entre los días 8 y 14. En esa franja convergen
