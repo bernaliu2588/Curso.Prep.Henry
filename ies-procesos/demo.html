@@ -486,12 +486,13 @@ input[type=checkbox]{accent-color:var(--sd)}
    → Tu proyecto → Configuración del proyecto → Tu app web
 ══════════════════════════════════════════════════════════════════ */
 const FB_CFG = {
-  apiKey:            "PEGAR_API_KEY",
-  authDomain:        "PEGAR_PROJECT_ID.firebaseapp.com",
-  projectId:         "PEGAR_PROJECT_ID",
-  storageBucket:     "PEGAR_PROJECT_ID.appspot.com",
-  messagingSenderId: "PEGAR_SENDER_ID",
-  appId:             "PEGAR_APP_ID"
+  apiKey:            "AIzaSyAJg3nU4X_Z6KOJmMt-3c55K49r7vx58VA",
+  authDomain:        "ies-contabilidad.firebaseapp.com",
+  projectId:         "ies-contabilidad",
+  storageBucket:     "ies-contabilidad.firebasestorage.app",
+  messagingSenderId: "390928715794",
+  appId:             "1:390928715794:web:13dbb8a3eb71cffb5b08cb",
+  measurementId:     "G-X4FJHM9D2K"
 };
 
 firebase.initializeApp(FB_CFG);
@@ -612,9 +613,9 @@ const TASKS={
     {id:'cr-ers', name:'Estado de Resultados — desarrollo y validación contra Siigo',
      detail:'Desarrollar el Estado de Resultados. Validar contra Siigo y estructurar para el dashboard.',
      from:12,to:13,doc:''},
-    {id:'cr-bea', name:'Sesión con Beatriz — comentarios comerciales al informe',
-     detail:'Sentarse con Beatriz entre los días 10 y 12 para que ella coloque los comentarios comerciales al informe: ventas, clientes, recaudo y el contexto detrás de las cifras. Incorporar esos comentarios antes de subir el informe a Gerencia.',
-     from:10,to:12,doc:''},
+        {id:'cr-bea', name:'Sesión con Beatriz — variación de ingresos para socios',
+     detail:'Sentarse con Beatriz entre los días 9 y 12 para analizar la variación de la facturación frente al mes anterior y documentar las causas. Ese análisis es el que sustenta el informe de ingresos que va a socios.',
+     from:9,to:12,doc:''},
     {id:'cr-das', name:'Dashboard integral — construcción y entrega a Don Edgar',
      detail:'Con todos los insumos validados y los comentarios comerciales de Beatriz incorporados, construir el dashboard ejecutivo. Día 15: entregar a Don Edgar.',
      from:13,to:15,doc:''},
@@ -635,12 +636,12 @@ const TASKS={
      from:15,to:21,doc:''}]:[]),
   ],
   beatriz:[
-    {id:'be-ins', name:'Insumos de facturación — cantidades, valores y tipos',
-     detail:'Preparar y entregar los insumos del período para que Edgar procese en Siigo.',
-     from:1,to:DINS,doc:''},
-    {id:'be-inf', name:'Comentarios comerciales al informe — sesión con el Contador',
-     detail:'Sentarse con Cristian entre los días 10 y 12 para revisar el informe del mes y colocarle los comentarios desde la visión comercial: comportamiento de ventas, situación de clientes, recaudo y todo el contexto que explique por qué las cifras se comportaron así. Estos comentarios se incorporan al informe antes de que pase a Gerencia.',
-     from:10,to:12,doc:''},
+    {id:'be-ins', name:'Entrega del insumo de facturación — cierre del período',
+     detail:'Consolidar y entregar el insumo de facturación del período: cantidades, valores y tipos. La entrega es hacia el día 27, para que Luis y Edgar armen el archivo plano y la facturación salga el día 1 del mes siguiente. Si el insumo llega tarde, toda la cadena de facturación se corre.',
+     from:26,to:28,doc:''},
+    {id:'be-inf', name:'Análisis de variación de ingresos — sesión con el Contador',
+     detail:'Sentarse con Cristian entre los días 9 y 12 para revisar el informe de ingresos que va a socios: explicar qué variaciones hubo en la facturación frente al mes anterior y por qué. Clientes nuevos o perdidos, cambios de volumen, operaciones atípicas y proyección del mes en curso. Estos comentarios se incorporan antes de que el informe pase a Gerencia.',
+     from:9,to:12,doc:''},
   ],
   edgar:[
     {id:'ed-arc', name:'Organización del archivo plano en Siigo',
