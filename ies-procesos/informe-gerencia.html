@@ -1,0 +1,301 @@
+<title>IES · Informe de Gestión para Gerencia</title>
+<style>
+.viz-root{
+  color-scheme:light;
+  --surface-1:#fcfcfb; --surface-2:#f3f3f0; --surface-3:#ffffff;
+  --text-primary:#0b0b0b; --text-secondary:#52514e; --text-muted:#7d7c76;
+  --rule:#dedcd4;
+  --s1:#2a78d6; --s2:#eb6834; --s3:#1baf7a; --s4:#eda100; --s5:#e87ba4;
+  --good:#0ca30c; --warn:#fab219; --crit:#d03b3b;
+  --navy:#1B3A6B;
+  --seq-1:#cde2fb; --seq-4:#3987e5; --seq-7:#184f95;
+}
+@media (prefers-color-scheme:dark){
+  :root:where(:not([data-theme="light"])) .viz-root{
+    color-scheme:dark;
+    --surface-1:#1a1a19; --surface-2:#232322; --surface-3:#232322;
+    --text-primary:#ffffff; --text-secondary:#c3c2b7; --text-muted:#918f85;
+    --rule:#3a3a37;
+    --s1:#3987e5; --s2:#d95926; --s3:#199e70; --s4:#c98500; --s5:#d55181;
+    --navy:#7EA6DE;
+  }
+}
+:root[data-theme="dark"] .viz-root{
+  color-scheme:dark;
+  --surface-1:#1a1a19; --surface-2:#232322; --surface-3:#232322;
+  --text-primary:#ffffff; --text-secondary:#c3c2b7; --text-muted:#918f85;
+  --rule:#3a3a37;
+  --s1:#3987e5; --s2:#d95926; --s3:#199e70; --s4:#c98500; --s5:#d55181;
+  --navy:#7EA6DE;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--surface-1)}
+.viz-root{
+  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;
+  background:var(--surface-1); color:var(--text-primary);
+  min-height:100vh; padding:40px 28px 64px;
+  font-variant-numeric:tabular-nums;
+}
+.wrap{max-width:1080px;margin:0 auto}
+
+/* cabecera */
+.hd{border-bottom:2px solid var(--text-primary);padding-bottom:18px;margin-bottom:32px}
+.hd-eye{font-size:11px;font-weight:700;letter-spacing:1.6px;text-transform:uppercase;color:var(--text-muted)}
+.hd-t{font-size:34px;font-weight:800;letter-spacing:-.8px;line-height:1.1;margin-top:8px;text-wrap:balance}
+.hd-s{font-size:14px;color:var(--text-secondary);margin-top:8px;max-width:62ch;line-height:1.55}
+
+/* seccion */
+.sec{margin-top:44px}
+.sec-h{display:flex;align-items:baseline;gap:12px;border-bottom:1px solid var(--rule);padding-bottom:9px;margin-bottom:6px}
+.sec-n{font-size:11px;font-weight:700;color:var(--text-muted);letter-spacing:1.2px}
+.sec-t{font-size:19px;font-weight:700;letter-spacing:-.3px}
+.sec-d{font-size:13px;color:var(--text-secondary);line-height:1.6;margin:12px 0 20px;max-width:70ch}
+
+/* tarjetas */
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px}
+.card{background:var(--surface-3);border:1px solid var(--rule);border-radius:10px;padding:15px}
+.card-top{display:flex;align-items:flex-start;gap:9px;margin-bottom:14px}
+.dot{width:11px;height:11px;border-radius:3px;flex-shrink:0;margin-top:3px}
+.card-n{font-size:14px;font-weight:700;line-height:1.2}
+.card-r{font-size:11px;color:var(--text-muted);margin-top:2px}
+.card-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px 8px;margin-bottom:13px}
+.k{font-size:21px;font-weight:800;letter-spacing:-.6px;line-height:1}
+.kl{font-size:10px;color:var(--text-muted);margin-top:3px;line-height:1.3}
+.pill{display:flex;align-items:center;gap:6px;font-size:11px;font-weight:600;
+  padding:6px 9px;border-radius:6px;line-height:1.35}
+.pill span{font-size:10px}
+.pill.ok{background:color-mix(in srgb,var(--good) 12%,transparent);color:var(--good)}
+.pill.warn{background:color-mix(in srgb,var(--warn) 20%,transparent);color:#8a5d00}
+.pill.crit{background:color-mix(in srgb,var(--crit) 12%,transparent);color:var(--crit)}
+@media (prefers-color-scheme:dark){:root:where(:not([data-theme="light"])) .pill.warn{color:var(--warn)}}
+:root[data-theme="dark"] .pill.warn{color:var(--warn)}
+
+/* leyenda */
+.leg{display:flex;flex-wrap:wrap;gap:14px;margin:0 0 16px}
+.leg-i{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text-secondary)}
+.leg-d{width:11px;height:11px;border-radius:3px;flex-shrink:0}
+
+/* barras apiladas por mes */
+.bars{display:flex;gap:8px;align-items:flex-end;height:230px;padding:0 2px;overflow-x:auto}
+.colwrap{flex:1;min-width:44px;display:flex;flex-direction:column;align-items:center;height:100%}
+.col{flex:1;width:100%;display:flex;flex-direction:column;justify-content:flex-end;
+  border-radius:4px 4px 0 0;overflow:hidden;gap:2px}
+.seg{width:100%;transition:opacity .12s}
+.seg:hover{opacity:.75}
+.coltot{font-size:11px;font-weight:700;margin-top:7px;color:var(--text-primary)}
+.collbl{font-size:11px;color:var(--text-muted);margin-top:2px}
+
+/* heatmap */
+.heat{display:grid;grid-template-columns:88px repeat(12,1fr);gap:3px;margin-top:4px}
+.hm-lbl{}
+.hm-h{font-size:10px;font-weight:700;color:var(--text-muted);text-align:center;padding-bottom:3px;letter-spacing:.4px}
+.hm-n{font-size:12px;font-weight:600;display:flex;align-items:center;color:var(--text-secondary)}
+.hm-c{aspect-ratio:1.55;border-radius:4px;display:flex;align-items:center;justify-content:center;
+  font-size:11px;font-weight:700;transition:transform .1s}
+.hm-c:hover{transform:scale(1.12)}
+.ramp{display:flex;align-items:center;gap:7px;margin-top:14px;font-size:11px;color:var(--text-muted)}
+.ramp-b{display:flex;gap:2px}
+.ramp-b i{width:22px;height:9px;border-radius:2px;display:block}
+
+/* carga por dia */
+.days{display:flex;gap:3px;align-items:flex-end;height:190px;margin-top:6px}
+.dcol{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;min-width:0}
+.dbar{width:100%;background:var(--s1);border-radius:3px 3px 0 0;min-height:3px}
+.dbar.crit{background:var(--crit)}
+.dnum{font-size:9px;color:var(--text-muted);margin-top:5px}
+.dnum.crit{color:var(--crit);font-weight:800}
+.zonas{display:flex;gap:3px;margin-top:9px;font-size:10px;color:var(--text-muted)}
+.zona{border-top:2px solid var(--rule);padding-top:5px;text-align:center;line-height:1.35}
+
+/* tabla */
+table{width:100%;border-collapse:collapse;font-size:13px;margin-top:4px;
+  color:var(--text-primary)}
+th,td{color:inherit}
+thead th{text-align:left;font-size:10px;font-weight:700;letter-spacing:.9px;text-transform:uppercase;
+  color:var(--text-muted);padding:9px 10px;border-bottom:2px solid var(--rule);white-space:nowrap}
+tbody td{padding:9px 10px;border-bottom:1px solid var(--rule);vertical-align:top;
+  line-height:1.45;color:var(--text-primary)}
+tbody tr:hover{background:var(--surface-2)}
+.num{text-align:right;font-variant-numeric:tabular-nums}
+.chip{display:inline-block;font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;white-space:nowrap}
+.c-legal{background:color-mix(in srgb,var(--crit) 12%,transparent);color:var(--crit)}
+.c-alta{background:color-mix(in srgb,var(--warn) 22%,transparent);color:#8a5d00}
+.c-media{background:color-mix(in srgb,var(--s1) 12%,transparent);color:var(--s1)}
+@media (prefers-color-scheme:dark){:root:where(:not([data-theme="light"])) .c-alta{color:var(--warn)}}
+:root[data-theme="dark"] .c-alta{color:var(--warn)}
+
+/* hallazgos */
+.find{display:grid;gap:10px}
+.f{display:grid;grid-template-columns:150px 1fr;gap:14px;padding:13px 15px;
+  background:var(--surface-3);border:1px solid var(--rule);border-radius:9px;
+  border-left:3px solid var(--s1)}
+.f.warn{border-left-color:var(--warn)}
+.f.crit{border-left-color:var(--crit)}
+.f-t{font-size:12px;font-weight:700;letter-spacing:.2px}
+.f-d{font-size:13px;color:var(--text-secondary);line-height:1.6}
+@media(max-width:640px){.f{grid-template-columns:1fr;gap:5px}}
+
+.nota{font-size:12px;color:var(--text-muted);line-height:1.65;margin-top:16px;
+  padding:13px 15px;background:var(--surface-2);border-radius:8px;max-width:74ch}
+.ft{margin-top:52px;padding-top:18px;border-top:1px solid var(--rule);
+  font-size:11px;color:var(--text-muted);line-height:1.7}
+.scroll{overflow-x:auto}
+</style>
+
+<div class="viz-root"><div class="wrap">
+
+<div class="hd">
+  <div class="hd-eye">IES · Intelligent Electronic Solutions</div>
+  <h1 class="hd-t">Informe de gestión de procesos contables</h1>
+  <p class="hd-s">Carga planificada del ciclo contable mensual para el año 2026.
+     Presenta la ocupación de cada posición, la concentración de la carga dentro del mes
+     y los hitos con fecha comprometida.</p>
+</div>
+
+<section class="sec">
+  <div class="sec-h"><span class="sec-n">01</span><h2 class="sec-t">Ocupación por posición</h2></div>
+  <p class="sec-d">Días-tarea mide cuántos días permanece abierta cada tarea sumadas todas.
+     No mide horas trabajadas: mide exposición y simultaneidad. El pico indica cuántas
+     tareas coinciden en un mismo día, que es donde aparece la tensión real.</p>
+  <div class="cards"><div class="card">
+      <div class="card-top"><span class="dot" style="background:var(--s1)"></span>
+        <div><div class="card-n">Isnardi Sanches</div><div class="card-r">Tesorera</div></div></div>
+      <div class="card-grid">
+        <div><div class="k">72</div><div class="kl">tareas al año</div></div>
+        <div><div class="k">1196</div><div class="kl">días-tarea</div></div>
+        <div><div class="k">100%</div><div class="kl">ocupación</div></div>
+        <div><div class="k">3.28</div><div class="kl">tareas/día</div></div>
+      </div>
+      <div class="pill warn"><span>●</span>Pico de 5 tareas simultáneas · Atención</div>
+    </div><div class="card">
+      <div class="card-top"><span class="dot" style="background:var(--s2)"></span>
+        <div><div class="card-n">Luis Amador</div><div class="card-r">Aux. Contable</div></div></div>
+      <div class="card-grid">
+        <div><div class="k">120</div><div class="kl">tareas al año</div></div>
+        <div><div class="k">1003</div><div class="kl">días-tarea</div></div>
+        <div><div class="k">100%</div><div class="kl">ocupación</div></div>
+        <div><div class="k">2.75</div><div class="kl">tareas/día</div></div>
+      </div>
+      <div class="pill warn"><span>●</span>Pico de 4 tareas simultáneas · Atención</div>
+    </div><div class="card">
+      <div class="card-top"><span class="dot" style="background:var(--s3)"></span>
+        <div><div class="card-n">Cristian Bernal</div><div class="card-r">Contador</div></div></div>
+      <div class="card-grid">
+        <div><div class="k">174</div><div class="kl">tareas al año</div></div>
+        <div><div class="k">719</div><div class="kl">días-tarea</div></div>
+        <div><div class="k">100%</div><div class="kl">ocupación</div></div>
+        <div><div class="k">1.97</div><div class="kl">tareas/día</div></div>
+      </div>
+      <div class="pill crit"><span>▲</span>Pico de 7 tareas simultáneas · Crítico</div>
+    </div><div class="card">
+      <div class="card-top"><span class="dot" style="background:var(--s4)"></span>
+        <div><div class="card-n">Beatriz</div><div class="card-r">Insumos Facturación</div></div></div>
+      <div class="card-grid">
+        <div><div class="k">24</div><div class="kl">tareas al año</div></div>
+        <div><div class="k">401</div><div class="kl">días-tarea</div></div>
+        <div><div class="k">100%</div><div class="kl">ocupación</div></div>
+        <div><div class="k">1.10</div><div class="kl">tareas/día</div></div>
+      </div>
+      <div class="pill ok"><span>✓</span>Pico de 2 tareas simultáneas · Holgado</div>
+    </div><div class="card">
+      <div class="card-top"><span class="dot" style="background:var(--s5)"></span>
+        <div><div class="card-n">Edgar Metaute</div><div class="card-r">Automatización / Siigo</div></div></div>
+      <div class="card-grid">
+        <div><div class="k">60</div><div class="kl">tareas al año</div></div>
+        <div><div class="k">269</div><div class="kl">días-tarea</div></div>
+        <div><div class="k">57%</div><div class="kl">ocupación</div></div>
+        <div><div class="k">0.74</div><div class="kl">tareas/día</div></div>
+      </div>
+      <div class="pill ok"><span>✓</span>Pico de 2 tareas simultáneas · Holgado</div>
+    </div></div>
+</section>
+
+<section class="sec">
+  <div class="sec-h"><span class="sec-n">02</span><h2 class="sec-t">Carga mes a mes</h2></div>
+  <p class="sec-d">Días-tarea del equipo por mes. Los meses de 28 y 30 días bajan de forma natural;
+     enero, marzo, mayo, julio, septiembre y noviembre suben por la declaración bimestral de IVA.</p>
+  <div class="leg"><div class="leg-i"><span class="leg-d" style="background:var(--s1)"></span>Isnardi Sanches</div><div class="leg-i"><span class="leg-d" style="background:var(--s2)"></span>Luis Amador</div><div class="leg-i"><span class="leg-d" style="background:var(--s3)"></span>Cristian Bernal</div><div class="leg-i"><span class="leg-d" style="background:var(--s4)"></span>Beatriz</div><div class="leg-i"><span class="leg-d" style="background:var(--s5)"></span>Edgar Metaute</div></div>
+  <div class="scroll"><div class="bars"><div class="colwrap"><div class="col"><div class="seg" style="height:7.47%;background:var(--s5)" title="Ene · Edgar Metaute: 23 días-tarea"></div><div class="seg" style="height:11.04%;background:var(--s4)" title="Ene · Beatriz: 34 días-tarea"></div><div class="seg" style="height:20.78%;background:var(--s3)" title="Ene · Cristian Bernal: 64 días-tarea"></div><div class="seg" style="height:27.60%;background:var(--s2)" title="Ene · Luis Amador: 85 días-tarea"></div><div class="seg" style="height:33.12%;background:var(--s1)" title="Ene · Isnardi Sanches: 102 días-tarea"></div></div><div class="coltot">308</div><div class="collbl">Ene</div></div><div class="colwrap"><div class="col"><div class="seg" style="height:6.49%;background:var(--s5)" title="Feb · Edgar Metaute: 20 días-tarea"></div><div class="seg" style="height:10.06%;background:var(--s4)" title="Feb · Beatriz: 31 días-tarea"></div><div class="seg" style="height:17.53%;background:var(--s3)" title="Feb · Cristian Bernal: 54 días-tarea"></div><div class="seg" style="height:24.68%;background:var(--s2)" title="Feb · Luis Amador: 76 días-tarea"></div><div class="seg" style="height:29.22%;background:var(--s1)" title="Feb · Isnardi Sanches: 90 días-tarea"></div></div><div class="coltot">271</div><div class="collbl">Feb</div></div><div class="colwrap"><div class="col"><div class="seg" style="height:7.47%;background:var(--s5)" title="Mar · Edgar Metaute: 23 días-tarea"></div><div class="seg" style="height:11.04%;background:var(--s4)" title="Mar · Beatriz: 34 días-tarea"></div><div class="seg" style="height:20.78%;background:var(--s3)" title="Mar · Cristian Bernal: 64 días-tarea"></div><div class="seg" style="height:27.60%;background:var(--s2)" title="Mar · Luis Amador: 85 días-tarea"></div><div class="seg" style="height:33.12%;background:var(--s1)" title="Mar · Isnardi Sanches: 102 días-tarea"></div></div><div class="coltot">308</div><div class="collbl">Mar</div></div><div class="colwrap"><div class="col"><div class="seg" style="height:7.14%;background:var(--s5)" title="Abr · Edgar Metaute: 22 días-tarea"></div><div class="seg" style="height:10.71%;background:var(--s4)" title="Abr · Beatriz: 33 días-tarea"></div><div class="seg" style="height:18.18%;background:var(--s3)" title="Abr · Cristian Bernal: 56 días-tarea"></div><div class="seg" style="height:26.95%;background:var(--s2)" title="Abr · Luis Amador: 83 días-tarea"></div><div class="seg" style="height:31.82%;background:var(--s1)" title="Abr · Isnardi Sanches: 98 días-tarea"></div></div><div class="coltot">292</div><div class="collbl">Abr</div></div><div class="colwrap"><div class="col"><div class="seg" style="height:7.47%;background:var(--s5)" title="May · Edgar Metaute: 23 días-tarea"></div><div class="seg" style="height:11.04%;background:var(--s4)" title="May · Beatriz: 34 días-tarea"></div><div class="seg" style="height:20.78%;background:var(--s3)" title="May · Cristian Bernal: 64 días-tarea"></div><div class="seg" style="height:27.60%;background:var(--s2)" title="May · Luis Amador: 85 días-tarea"></div><div class="seg" style="height:33.12%;background:var(--s1)" title="May · Isnardi Sanches: 102 días-tarea"></div></div><div class="coltot">308</div><div class="collbl">May</div></div><div class="colwrap"><div class="col"><div class="seg" style="height:7.14%;background:var(--s5)" title="Jun · Edgar Metaute: 22 días-tarea"></div><div class="seg" style="height:10.71%;background:var(--s4)" title="Jun · Beatriz: 33 días-tarea"></div><div class="seg" style="height:18.18%;background:var(--s3)" title="Jun · Cristian Bernal: 56 días-tarea"></div><div class="seg" style="height:26.95%;background:var(--s2)" title="Jun · Luis Amador: 83 días-tarea"></div><div class="seg" style="height:31.82%;background:var(--s1)" title="Jun · Isnardi Sanches: 98 días-tarea"></div></div><div class="coltot">292</div><div class="collbl">Jun</div></div><div class="colwrap"><div class="col"><div class="seg" style="height:7.47%;background:var(--s5)" title="Jul · Edgar Metaute: 23 días-tarea"></div><div class="seg" style="height:11.04%;background:var(--s4)" title="Jul · Beatriz: 34 días-tarea"></div><div class="seg" style="height:20.78%;background:var(--s3)" title="Jul · Cristian Bernal: 64 días-tarea"></div><div class="seg" style="height:27.60%;background:var(--s2)" title="Jul · Luis Amador: 85 días-tarea"></div><div class="seg" style="height:33.12%;background:var(--s1)" title="Jul · Isnardi Sanches: 102 días-tarea"></div></div><div class="coltot">308</div><div class="collbl">Jul</div></div><div class="colwrap"><div class="col"><div class="seg" style="height:7.47%;background:var(--s5)" title="Ago · Edgar Metaute: 23 días-tarea"></div><div class="seg" style="height:11.04%;background:var(--s4)" title="Ago · Beatriz: 34 días-tarea"></div><div class="seg" style="height:18.51%;background:var(--s3)" title="Ago · Cristian Bernal: 57 días-tarea"></div><div class="seg" style="height:27.60%;background:var(--s2)" title="Ago · Luis Amador: 85 días-tarea"></div><div class="seg" style="height:33.12%;background:var(--s1)" title="Ago · Isnardi Sanches: 102 días-tarea"></div></div><div class="coltot">301</div><div class="collbl">Ago</div></div><div class="colwrap"><div class="col"><div class="seg" style="height:7.14%;background:var(--s5)" title="Sep · Edgar Metaute: 22 días-tarea"></div><div class="seg" style="height:10.71%;background:var(--s4)" title="Sep · Beatriz: 33 días-tarea"></div><div class="seg" style="height:20.45%;background:var(--s3)" title="Sep · Cristian Bernal: 63 días-tarea"></div><div class="seg" style="height:26.95%;background:var(--s2)" title="Sep · Luis Amador: 83 días-tarea"></div><div class="seg" style="height:31.82%;background:var(--s1)" title="Sep · Isnardi Sanches: 98 días-tarea"></div></div><div class="coltot">299</div><div class="collbl">Sep</div></div><div class="colwrap"><div class="col"><div class="seg" style="height:7.47%;background:var(--s5)" title="Oct · Edgar Metaute: 23 días-tarea"></div><div class="seg" style="height:11.04%;background:var(--s4)" title="Oct · Beatriz: 34 días-tarea"></div><div class="seg" style="height:18.51%;background:var(--s3)" title="Oct · Cristian Bernal: 57 días-tarea"></div><div class="seg" style="height:27.60%;background:var(--s2)" title="Oct · Luis Amador: 85 días-tarea"></div><div class="seg" style="height:33.12%;background:var(--s1)" title="Oct · Isnardi Sanches: 102 días-tarea"></div></div><div class="coltot">301</div><div class="collbl">Oct</div></div><div class="colwrap"><div class="col"><div class="seg" style="height:7.14%;background:var(--s5)" title="Nov · Edgar Metaute: 22 días-tarea"></div><div class="seg" style="height:10.71%;background:var(--s4)" title="Nov · Beatriz: 33 días-tarea"></div><div class="seg" style="height:20.45%;background:var(--s3)" title="Nov · Cristian Bernal: 63 días-tarea"></div><div class="seg" style="height:26.95%;background:var(--s2)" title="Nov · Luis Amador: 83 días-tarea"></div><div class="seg" style="height:31.82%;background:var(--s1)" title="Nov · Isnardi Sanches: 98 días-tarea"></div></div><div class="coltot">299</div><div class="collbl">Nov</div></div><div class="colwrap"><div class="col"><div class="seg" style="height:7.47%;background:var(--s5)" title="Dic · Edgar Metaute: 23 días-tarea"></div><div class="seg" style="height:11.04%;background:var(--s4)" title="Dic · Beatriz: 34 días-tarea"></div><div class="seg" style="height:18.51%;background:var(--s3)" title="Dic · Cristian Bernal: 57 días-tarea"></div><div class="seg" style="height:27.60%;background:var(--s2)" title="Dic · Luis Amador: 85 días-tarea"></div><div class="seg" style="height:33.12%;background:var(--s1)" title="Dic · Isnardi Sanches: 102 días-tarea"></div></div><div class="coltot">301</div><div class="collbl">Dic</div></div></div></div>
+</section>
+
+<section class="sec">
+  <div class="sec-h"><span class="sec-n">03</span><h2 class="sec-t">Distribución por persona y mes</h2></div>
+  <p class="sec-d">Cada celda muestra los días-tarea de esa persona en ese mes. El tono se
+     intensifica con la carga.</p>
+  <div class="scroll"><div class="heat"><div class="hm-lbl"></div><div class="hm-h">Ene</div><div class="hm-h">Feb</div><div class="hm-h">Mar</div><div class="hm-h">Abr</div><div class="hm-h">May</div><div class="hm-h">Jun</div><div class="hm-h">Jul</div><div class="hm-h">Ago</div><div class="hm-h">Sep</div><div class="hm-h">Oct</div><div class="hm-h">Nov</div><div class="hm-h">Dic</div><div class="hm-n">Isnardi</div><div class="hm-c" style="background:#184f95;color:#ffffff" title="Isnardi Sanches · Ene: 102 días-tarea">102</div><div class="hm-c" style="background:#184f95;color:#ffffff" title="Isnardi Sanches · Feb: 90 días-tarea">90</div><div class="hm-c" style="background:#184f95;color:#ffffff" title="Isnardi Sanches · Mar: 102 días-tarea">102</div><div class="hm-c" style="background:#184f95;color:#ffffff" title="Isnardi Sanches · Abr: 98 días-tarea">98</div><div class="hm-c" style="background:#184f95;color:#ffffff" title="Isnardi Sanches · May: 102 días-tarea">102</div><div class="hm-c" style="background:#184f95;color:#ffffff" title="Isnardi Sanches · Jun: 98 días-tarea">98</div><div class="hm-c" style="background:#184f95;color:#ffffff" title="Isnardi Sanches · Jul: 102 días-tarea">102</div><div class="hm-c" style="background:#184f95;color:#ffffff" title="Isnardi Sanches · Ago: 102 días-tarea">102</div><div class="hm-c" style="background:#184f95;color:#ffffff" title="Isnardi Sanches · Sep: 98 días-tarea">98</div><div class="hm-c" style="background:#184f95;color:#ffffff" title="Isnardi Sanches · Oct: 102 días-tarea">102</div><div class="hm-c" style="background:#184f95;color:#ffffff" title="Isnardi Sanches · Nov: 98 días-tarea">98</div><div class="hm-c" style="background:#184f95;color:#ffffff" title="Isnardi Sanches · Dic: 102 días-tarea">102</div><div class="hm-n">Luis</div><div class="hm-c" style="background:#256abf;color:#ffffff" title="Luis Amador · Ene: 85 días-tarea">85</div><div class="hm-c" style="background:#256abf;color:#ffffff" title="Luis Amador · Feb: 76 días-tarea">76</div><div class="hm-c" style="background:#256abf;color:#ffffff" title="Luis Amador · Mar: 85 días-tarea">85</div><div class="hm-c" style="background:#256abf;color:#ffffff" title="Luis Amador · Abr: 83 días-tarea">83</div><div class="hm-c" style="background:#256abf;color:#ffffff" title="Luis Amador · May: 85 días-tarea">85</div><div class="hm-c" style="background:#256abf;color:#ffffff" title="Luis Amador · Jun: 83 días-tarea">83</div><div class="hm-c" style="background:#256abf;color:#ffffff" title="Luis Amador · Jul: 85 días-tarea">85</div><div class="hm-c" style="background:#256abf;color:#ffffff" title="Luis Amador · Ago: 85 días-tarea">85</div><div class="hm-c" style="background:#256abf;color:#ffffff" title="Luis Amador · Sep: 83 días-tarea">83</div><div class="hm-c" style="background:#256abf;color:#ffffff" title="Luis Amador · Oct: 85 días-tarea">85</div><div class="hm-c" style="background:#256abf;color:#ffffff" title="Luis Amador · Nov: 83 días-tarea">83</div><div class="hm-c" style="background:#256abf;color:#ffffff" title="Luis Amador · Dic: 85 días-tarea">85</div><div class="hm-n">Cristian</div><div class="hm-c" style="background:#2a78d6;color:#ffffff" title="Cristian Bernal · Ene: 64 días-tarea">64</div><div class="hm-c" style="background:#3987e5;color:#ffffff" title="Cristian Bernal · Feb: 54 días-tarea">54</div><div class="hm-c" style="background:#2a78d6;color:#ffffff" title="Cristian Bernal · Mar: 64 días-tarea">64</div><div class="hm-c" style="background:#3987e5;color:#ffffff" title="Cristian Bernal · Abr: 56 días-tarea">56</div><div class="hm-c" style="background:#2a78d6;color:#ffffff" title="Cristian Bernal · May: 64 días-tarea">64</div><div class="hm-c" style="background:#3987e5;color:#ffffff" title="Cristian Bernal · Jun: 56 días-tarea">56</div><div class="hm-c" style="background:#2a78d6;color:#ffffff" title="Cristian Bernal · Jul: 64 días-tarea">64</div><div class="hm-c" style="background:#3987e5;color:#ffffff" title="Cristian Bernal · Ago: 57 días-tarea">57</div><div class="hm-c" style="background:#2a78d6;color:#ffffff" title="Cristian Bernal · Sep: 63 días-tarea">63</div><div class="hm-c" style="background:#3987e5;color:#ffffff" title="Cristian Bernal · Oct: 57 días-tarea">57</div><div class="hm-c" style="background:#2a78d6;color:#ffffff" title="Cristian Bernal · Nov: 63 días-tarea">63</div><div class="hm-c" style="background:#3987e5;color:#ffffff" title="Cristian Bernal · Dic: 57 días-tarea">57</div><div class="hm-n">Beatriz</div><div class="hm-c" style="background:#6da7ec;color:#0d366b" title="Beatriz · Ene: 34 días-tarea">34</div><div class="hm-c" style="background:#6da7ec;color:#0d366b" title="Beatriz · Feb: 31 días-tarea">31</div><div class="hm-c" style="background:#6da7ec;color:#0d366b" title="Beatriz · Mar: 34 días-tarea">34</div><div class="hm-c" style="background:#6da7ec;color:#0d366b" title="Beatriz · Abr: 33 días-tarea">33</div><div class="hm-c" style="background:#6da7ec;color:#0d366b" title="Beatriz · May: 34 días-tarea">34</div><div class="hm-c" style="background:#6da7ec;color:#0d366b" title="Beatriz · Jun: 33 días-tarea">33</div><div class="hm-c" style="background:#6da7ec;color:#0d366b" title="Beatriz · Jul: 34 días-tarea">34</div><div class="hm-c" style="background:#6da7ec;color:#0d366b" title="Beatriz · Ago: 34 días-tarea">34</div><div class="hm-c" style="background:#6da7ec;color:#0d366b" title="Beatriz · Sep: 33 días-tarea">33</div><div class="hm-c" style="background:#6da7ec;color:#0d366b" title="Beatriz · Oct: 34 días-tarea">34</div><div class="hm-c" style="background:#6da7ec;color:#0d366b" title="Beatriz · Nov: 33 días-tarea">33</div><div class="hm-c" style="background:#6da7ec;color:#0d366b" title="Beatriz · Dic: 34 días-tarea">34</div><div class="hm-n">Edgar</div><div class="hm-c" style="background:#9ec5f4;color:#0d366b" title="Edgar Metaute · Ene: 23 días-tarea">23</div><div class="hm-c" style="background:#9ec5f4;color:#0d366b" title="Edgar Metaute · Feb: 20 días-tarea">20</div><div class="hm-c" style="background:#9ec5f4;color:#0d366b" title="Edgar Metaute · Mar: 23 días-tarea">23</div><div class="hm-c" style="background:#9ec5f4;color:#0d366b" title="Edgar Metaute · Abr: 22 días-tarea">22</div><div class="hm-c" style="background:#9ec5f4;color:#0d366b" title="Edgar Metaute · May: 23 días-tarea">23</div><div class="hm-c" style="background:#9ec5f4;color:#0d366b" title="Edgar Metaute · Jun: 22 días-tarea">22</div><div class="hm-c" style="background:#9ec5f4;color:#0d366b" title="Edgar Metaute · Jul: 23 días-tarea">23</div><div class="hm-c" style="background:#9ec5f4;color:#0d366b" title="Edgar Metaute · Ago: 23 días-tarea">23</div><div class="hm-c" style="background:#9ec5f4;color:#0d366b" title="Edgar Metaute · Sep: 22 días-tarea">22</div><div class="hm-c" style="background:#9ec5f4;color:#0d366b" title="Edgar Metaute · Oct: 23 días-tarea">23</div><div class="hm-c" style="background:#9ec5f4;color:#0d366b" title="Edgar Metaute · Nov: 22 días-tarea">22</div><div class="hm-c" style="background:#9ec5f4;color:#0d366b" title="Edgar Metaute · Dic: 23 días-tarea">23</div></div></div>
+  <div class="ramp">
+    <span>Menor carga</span>
+    <span class="ramp-b">
+      <i style="background:#cde2fb"></i><i style="background:#9ec5f4"></i><i style="background:#6da7ec"></i>
+      <i style="background:#3987e5"></i><i style="background:#2a78d6"></i><i style="background:#256abf"></i>
+      <i style="background:#184f95"></i>
+    </span>
+    <span>Mayor carga</span>
+  </div>
+</section>
+
+<section class="sec">
+  <div class="sec-h"><span class="sec-n">04</span><h2 class="sec-t">Concentración dentro del mes</h2></div>
+  <p class="sec-d">Tareas del equipo abiertas cada día. La franja del 10 al 13 concentra el cierre
+     contable, los cinco insumos del informe y las dos sesiones de revisión.
+     Es el tramo donde un retraso se propaga al resto del ciclo.</p>
+  <div class="days"><div class="dcol" title="Día 1: 9 tareas del equipo abiertas"><div class="dbar" style="height:60.0%"></div><div class="dnum">1</div></div><div class="dcol" title="Día 2: 9 tareas del equipo abiertas"><div class="dbar" style="height:60.0%"></div><div class="dnum">2</div></div><div class="dcol" title="Día 3: 9 tareas del equipo abiertas"><div class="dbar" style="height:60.0%"></div><div class="dnum">3</div></div><div class="dcol" title="Día 4: 9 tareas del equipo abiertas"><div class="dbar" style="height:60.0%"></div><div class="dnum">4</div></div><div class="dcol" title="Día 5: 9 tareas del equipo abiertas"><div class="dbar" style="height:60.0%"></div><div class="dnum">5</div></div><div class="dcol" title="Día 6: 9 tareas del equipo abiertas"><div class="dbar" style="height:60.0%"></div><div class="dnum">6</div></div><div class="dcol" title="Día 7: 9 tareas del equipo abiertas"><div class="dbar" style="height:60.0%"></div><div class="dnum">7</div></div><div class="dcol" title="Día 8: 9 tareas del equipo abiertas"><div class="dbar" style="height:60.0%"></div><div class="dnum">8</div></div><div class="dcol" title="Día 9: 10 tareas del equipo abiertas"><div class="dbar" style="height:66.7%"></div><div class="dnum">9</div></div><div class="dcol" title="Día 10: 15 tareas del equipo abiertas"><div class="dbar crit" style="height:100.0%"></div><div class="dnum crit">10</div></div><div class="dcol" title="Día 11: 14 tareas del equipo abiertas"><div class="dbar crit" style="height:93.3%"></div><div class="dnum crit">11</div></div><div class="dcol" title="Día 12: 15 tareas del equipo abiertas"><div class="dbar crit" style="height:100.0%"></div><div class="dnum crit">12</div></div><div class="dcol" title="Día 13: 15 tareas del equipo abiertas"><div class="dbar crit" style="height:100.0%"></div><div class="dnum crit">13</div></div><div class="dcol" title="Día 14: 12 tareas del equipo abiertas"><div class="dbar" style="height:80.0%"></div><div class="dnum">14</div></div><div class="dcol" title="Día 15: 10 tareas del equipo abiertas"><div class="dbar" style="height:66.7%"></div><div class="dnum">15</div></div><div class="dcol" title="Día 16: 8 tareas del equipo abiertas"><div class="dbar" style="height:53.3%"></div><div class="dnum">16</div></div><div class="dcol" title="Día 17: 7 tareas del equipo abiertas"><div class="dbar" style="height:46.7%"></div><div class="dnum">17</div></div><div class="dcol" title="Día 18: 7 tareas del equipo abiertas"><div class="dbar" style="height:46.7%"></div><div class="dnum">18</div></div><div class="dcol" title="Día 19: 7 tareas del equipo abiertas"><div class="dbar" style="height:46.7%"></div><div class="dnum">19</div></div><div class="dcol" title="Día 20: 8 tareas del equipo abiertas"><div class="dbar" style="height:53.3%"></div><div class="dnum">20</div></div><div class="dcol" title="Día 21: 7 tareas del equipo abiertas"><div class="dbar" style="height:46.7%"></div><div class="dnum">21</div></div><div class="dcol" title="Día 22: 8 tareas del equipo abiertas"><div class="dbar" style="height:53.3%"></div><div class="dnum">22</div></div><div class="dcol" title="Día 23: 8 tareas del equipo abiertas"><div class="dbar" style="height:53.3%"></div><div class="dnum">23</div></div><div class="dcol" title="Día 24: 8 tareas del equipo abiertas"><div class="dbar" style="height:53.3%"></div><div class="dnum">24</div></div><div class="dcol" title="Día 25: 10 tareas del equipo abiertas"><div class="dbar" style="height:66.7%"></div><div class="dnum">25</div></div><div class="dcol" title="Día 26: 10 tareas del equipo abiertas"><div class="dbar" style="height:66.7%"></div><div class="dnum">26</div></div><div class="dcol" title="Día 27: 10 tareas del equipo abiertas"><div class="dbar" style="height:66.7%"></div><div class="dnum">27</div></div><div class="dcol" title="Día 28: 10 tareas del equipo abiertas"><div class="dbar" style="height:66.7%"></div><div class="dnum">28</div></div><div class="dcol" title="Día 29: 11 tareas del equipo abiertas"><div class="dbar" style="height:73.3%"></div><div class="dnum">29</div></div><div class="dcol" title="Día 30: 10 tareas del equipo abiertas"><div class="dbar" style="height:66.7%"></div><div class="dnum">30</div></div><div class="dcol" title="Día 31: 9 tareas del equipo abiertas"><div class="dbar" style="height:60.0%"></div><div class="dnum">31</div></div></div>
+  <div class="zonas">
+    <div class="zona" style="flex:7">Días 1–7<br>Apertura y facturación</div>
+    <div class="zona" style="flex:7">Días 8–14<br>Cierre e informe</div>
+    <div class="zona" style="flex:7">Días 15–21<br>Entrega y socios</div>
+    <div class="zona" style="flex:7">Días 22–28<br>Causaciones y nómina</div>
+    <div class="zona" style="flex:3">29–fin<br>Desembolsos</div>
+  </div>
+  <div class="nota">Los días marcados en rojo llegan a 14 y 15 tareas simultáneas del equipo,
+     frente a una media de 10. Es el punto más tenso del mes y coincide con las obligaciones
+     de fecha legal.</div>
+</section>
+
+<section class="sec">
+  <div class="sec-h"><span class="sec-n">05</span><h2 class="sec-t">Hitos con fecha comprometida</h2></div>
+  <p class="sec-d">Compromisos del ciclo ordenados por fecha. <strong>Legal</strong> tiene vencimiento
+     de ley. <strong>Alta</strong> significa que un retraso frena a otra persona.
+     <strong>Media</strong> afecta solo al proceso propio.</p>
+  <div class="scroll"><table>
+    <thead><tr><th>Días</th><th>Responsable</th><th>Hito</th><th>Límite</th><th>Criticidad</th></tr></thead>
+    <tbody><tr><td class="num">1 al 5</td><td>Edgar Metaute</td><td>Emisión de facturas electrónicas desde Siigo hacia DIAN</td><td class="num">Día 5</td><td><span class="chip c-alta">Alta</span></td></tr><tr><td class="num">3 al 9</td><td>Luis Amador</td><td>Conciliación bancaria: extractos contra libro</td><td class="num">Día 9</td><td><span class="chip c-media">Media</span></td></tr><tr><td class="num">6 al 10</td><td>Luis + Edgar</td><td>Conciliación de tarjeta y definición de viáticos</td><td class="num">Día 10</td><td><span class="chip c-alta">Alta</span></td></tr><tr><td class="num">9 al 13</td><td>Cristian Bernal</td><td>Insumos del informe: flujo, cartera, recaudo, EESF y ER</td><td class="num">Día 13</td><td><span class="chip c-alta">Alta</span></td></tr><tr><td class="num">10 al 12</td><td>Beatriz</td><td>Comentarios comerciales al informe</td><td class="num">Día 12</td><td><span class="chip c-media">Media</span></td></tr><tr><td class="num">10 al 13</td><td>Luis Amador</td><td>Causación de seguridad social</td><td class="num">Día 13</td><td><span class="chip c-legal">Legal</span></td></tr><tr><td class="num">10 al 14</td><td>Luis Amador</td><td>Causación de nómina de primera quincena</td><td class="num">Día 14</td><td><span class="chip c-legal">Legal</span></td></tr><tr><td class="num">10 al 14</td><td>Cristian Bernal</td><td>Cierre contable y retención en la fuente</td><td class="num">Día 14</td><td><span class="chip c-legal">Legal</span></td></tr><tr><td class="num">13 al 14</td><td>Edgar Metaute</td><td>Feedback del informe antes de socios</td><td class="num">Día 14</td><td><span class="chip c-alta">Alta</span></td></tr><tr><td class="num">13 al 15</td><td>Isnardi Sanches</td><td>Pago de seguridad social a las entidades</td><td class="num">Día 15</td><td><span class="chip c-legal">Legal</span></td></tr><tr><td class="num">13 al 15</td><td>Cristian Bernal</td><td>Entrega del dashboard a Gerencia</td><td class="num">Día 15</td><td><span class="chip c-alta">Alta</span></td></tr><tr><td class="num">14 al 16</td><td>Isnardi Sanches</td><td>Desembolso de nómina de primera quincena</td><td class="num">Día 16</td><td><span class="chip c-legal">Legal</span></td></tr><tr><td class="num">15 al 20</td><td>Cristian Bernal</td><td>Proceso con socios</td><td class="num">Día 20</td><td><span class="chip c-alta">Alta</span></td></tr><tr><td class="num">15 al 21</td><td>Cristian Bernal</td><td>Declaración de IVA en meses del bimestre</td><td class="num">Día 21</td><td><span class="chip c-legal">Legal</span></td></tr><tr><td class="num">15 al 25</td><td>Luis Amador</td><td>Validación del RADIAN</td><td class="num">Día 25</td><td><span class="chip c-media">Media</span></td></tr><tr><td class="num">25 al 29</td><td>Luis Amador</td><td>Causación de nómina de segunda quincena</td><td class="num">Día 29</td><td><span class="chip c-legal">Legal</span></td></tr><tr><td class="num">26 al cierre</td><td>Luis + Edgar</td><td>Archivo plano para facturar el día 1</td><td class="num">Cierre</td><td><span class="chip c-alta">Alta</span></td></tr><tr><td class="num">29 al cierre</td><td>Isnardi Sanches</td><td>Desembolso de nómina de segunda quincena</td><td class="num">Cierre</td><td><span class="chip c-legal">Legal</span></td></tr></tbody>
+  </table></div>
+</section>
+
+<section class="sec">
+  <div class="sec-h"><span class="sec-n">06</span><h2 class="sec-t">Hallazgos</h2></div>
+  <div class="find">
+    <div class="f crit"><div class="f-t">Concentración</div>
+      <div class="f-d">El 30% de la carga del mes cae entre los días 8 y 14. En esa franja convergen
+        el cierre contable, la retención en la fuente, los cinco insumos del informe y las dos
+        sesiones de revisión. No es un problema de planeación: son dependencias reales que no
+        admiten reordenamiento.</div></div>
+    <div class="f crit"><div class="f-t">Contaduría</div>
+      <div class="f-d">Pico de 7 tareas propias en un mismo día, el más alto del equipo. Es la
+        posición con la ventana más apretada del ciclo. La vía para descomprimir no es mover
+        fechas sino delegar la preparación de insumos —flujo de efectivo o cartera— dejando
+        solo la validación en Contaduría.</div></div>
+    <div class="f warn"><div class="f-t">Tesorería</div>
+      <div class="f-d">Ocupación del 100% del año: el registro diario de recibos de caja y pagos
+        mantiene tareas abiertas todos los días. Es carga sostenida, no picos. Su pico de 5
+        coincide con los desembolsos de nómina y seguridad social.</div></div>
+    <div class="f warn"><div class="f-t">Gerencia</div>
+      <div class="f-d">Dos compromisos con fecha propia: definir los viáticos de la tarjeta de
+        crédito entre los días 6 y 10, y dar feedback al informe entre el 13 y el 14. El primero
+        bloquea el cierre de una conciliación; el segundo, la entrega a socios.</div></div>
+    <div class="f"><div class="f-t">Área comercial</div>
+      <div class="f-d">Beatriz aporta 401 días-tarea al año con solo 2 tareas: son procesos
+        permanentes, no puntuales. Su entrega de insumos es el punto de arranque de toda la
+        cadena de facturación.</div></div>
+  </div>
+</section>
+
+<div class="ft">
+  Elaborado por Cristian Bernal — Contador · IES<br>
+  Los datos provienen del catálogo de procesos cargado en la aplicación de seguimiento.
+  Corresponden a la <strong>carga planificada</strong>; el cumplimiento real se mide al cierre
+  de cada mes en la hoja de gestión mensual.
+</div>
+
+</div></div>
